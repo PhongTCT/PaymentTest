@@ -35,6 +35,15 @@
     <div class="container">
         <h1>Dashboard</h1>
 
+        <!-- Weekly Maintenance Alert -->
+        <div class="maintenance-alert">
+            <div>
+                <span class="alert-badge">MAINTENANCE</span>
+                <strong>Weekly maintenance check is scheduled for ${maintenanceAlertDate}.</strong>
+            </div>
+            <p>Review device status, backups, and pending network tasks before the maintenance window.</p>
+        </div>
+
         <!-- Summary Cards -->
         <div class="card-grid">
             <div class="card card-blue">

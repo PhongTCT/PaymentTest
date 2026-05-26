@@ -3,6 +3,8 @@ package controller;
 import model.User;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +46,7 @@ public class DashboardServlet extends HttpServlet {
         // User is logged in - get user info for the view
         User currentUser = (User) session.getAttribute("currentUser");
         request.setAttribute("currentUser", currentUser);
+        request.setAttribute("maintenanceAlertDate", getNextMonday());
 
         // Forward to dashboard JSP
         request.getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(request, response);
@@ -56,5 +59,9 @@ public class DashboardServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
+    }
+
+    private LocalDate getNextMonday() {
+        return LocalDate.now().with(TemporalAdjusters.next(java.time.DayOfWeek.MONDAY));
     }
 }
