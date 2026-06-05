@@ -7,14 +7,25 @@ public class UserDTO {
      private String password;
      private String fullName;
      private String email;
+<<<<<<< HEAD
      private boolean status;
 
     public UserDTO(int userId, String userName, String password, String fullName, String email, boolean status) {
+=======
+     private String role;
+     private boolean status;
+
+    public UserDTO(int userId, String userName, String password, String fullName, String email, String role, boolean status) {
+>>>>>>> Code_in_here
         this.userId = userId;
         this.userName = userName;
         this.password = password;
         this.fullName = fullName;
         this.email = email;
+<<<<<<< HEAD
+=======
+        this.role = role;
+>>>>>>> Code_in_here
         this.status = status;
     }
 
@@ -68,7 +79,22 @@ public class UserDTO {
     public void setStatus(boolean status) {
         this.status = status;
     }
+<<<<<<< HEAD
      
      
     
 }
+=======
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+     
+     
+    
+}
+>>>>>>> Code_in_here

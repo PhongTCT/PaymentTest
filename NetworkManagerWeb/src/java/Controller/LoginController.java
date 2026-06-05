@@ -5,7 +5,10 @@
 package Controller;
 
 import java.io.IOException;
+<<<<<<< HEAD
 import java.io.PrintWriter;
+=======
+>>>>>>> Code_in_here
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +38,13 @@ public class LoginController extends HttpServlet {
         
         String url = "";
         HttpSession session = request.getSession();
+<<<<<<< HEAD
         
+=======
+        if(session.getAttribute("user") == null){
+            
+        }
+>>>>>>> Code_in_here
         
         
     }
@@ -79,4 +88,8 @@ public class LoginController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> Code_in_here
