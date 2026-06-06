@@ -111,6 +111,18 @@ public class RouterDAO implements IDAO<RouterDTO, Integer> {
     public RouterDTO searchById(Integer id) {
        String sql="SELECT * FROM router WHERE router_id=?";
         System.out.println(sql);
+        try {
+            Connection connect = DbUtils.getConnection();
+            PreparedStatement ps = connect.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return mapRow(rs);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     public boolean softDelete(int routerID) {
         String sql = "UPDATE router SET status = 0 WHERE router_id = ?";
