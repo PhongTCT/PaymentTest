@@ -49,7 +49,7 @@ public class RouterDAO implements IDAO<RouterDTO, Integer> {
             ps.setString(7, t.getStatus());
             ps.setString(8, t.getLocation());
             ps.setInt(9, t.getRoomId());
-            return ps.executeUpdate()>0;
+            return ps.executeUpdate() > 0;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,10 +62,10 @@ public class RouterDAO implements IDAO<RouterDTO, Integer> {
         String sql = "UPDATE router SET "
                 + " router_name = ?, ip_address =  ?, "
                 + "mac_address = ?, model = ?, firmware = ? "
-                +"status=?, location=?, room_id"
+                + "status=?, location=?, room_id"
                 + "WHERE router_id = ?";
         try {
-            Connection connect= DbUtils.getConnection();
+            Connection connect = DbUtils.getConnection();
             PreparedStatement ps = connect.prepareStatement(sql);
             ps.setInt(1, t.getRouterId());
             ps.setString(2, t.getRouterName());
@@ -76,7 +76,7 @@ public class RouterDAO implements IDAO<RouterDTO, Integer> {
             ps.setString(7, t.getStatus());
             ps.setString(8, t.getLocation());
             ps.setInt(9, t.getRoomId());
-            return ps.executeUpdate()>0;
+            return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,15 +91,15 @@ public class RouterDAO implements IDAO<RouterDTO, Integer> {
     @Override
     public ArrayList<RouterDTO> ListAll() {
         ArrayList<RouterDTO> list = new ArrayList<>();
-       String sql = "SELECT*FROM router";
+        String sql = "SELECT*FROM router";
         try {
             Connection connect = DbUtils.getConnection();
             Statement st = connect.createStatement();
             ResultSet rs = st.executeQuery(sql);
-            
-            while(rs.next()){
+
+            while (rs.next()) {
                 list.add(mapRow(rs));
-                
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -109,14 +109,14 @@ public class RouterDAO implements IDAO<RouterDTO, Integer> {
 
     @Override
     public RouterDTO searchById(Integer id) {
-       String sql="SELECT * FROM router WHERE router_id=?";
+        String sql = "SELECT * FROM router WHERE router_id=?";
         System.out.println(sql);
         try {
             Connection connect = DbUtils.getConnection();
             PreparedStatement ps = connect.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return mapRow(rs);
             }
         } catch (Exception e) {
@@ -124,10 +124,12 @@ public class RouterDAO implements IDAO<RouterDTO, Integer> {
         }
         return null;
     }
+
     public boolean softDelete(int routerID) {
         String sql = "UPDATE router SET status = 0 WHERE router_id = ?";
-        try (Connection conn = DbUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( 
+                Connection conn = DbUtils.getConnection();  
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, routerID);
             return ps.executeUpdate() > 0;
@@ -137,5 +139,28 @@ public class RouterDAO implements IDAO<RouterDTO, Integer> {
         }
         return false;
     }
+
+    public boolean updateStatus(int routerId, String status) {
+        String sql = "UPDATE Router SET status = ? WHERE router_id = ?";
+
+        try (
+                Connection conn = DbUtils.getConnection(); 
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, status);
+            ps.setInt(2, routerId);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+   public boolean restartRouter(int routerId) {
+    return updateStatus(routerId, "MAINTENANCE");
+}
 
 }
