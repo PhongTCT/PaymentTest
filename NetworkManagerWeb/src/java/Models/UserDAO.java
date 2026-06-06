@@ -1,39 +1,7 @@
 
 package Models;
 
-<<<<<<< HEAD
-import java.util.ArrayList;
 
-
-public class UserDAO implements IDAO<UserDTO, Object>{
-
-    @Override
-    public void add(UserDTO t) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void update(UserDTO t) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void remove(UserDTO t) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public ArrayList<UserDTO> ListAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public ArrayList<UserDTO> searchByRoom(Object id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    
-}
-=======
 import Utils.DbUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -60,7 +28,7 @@ public class UserDAO implements IDAO<UserDTO, Integer>{
     @Override
     public boolean insert(UserDTO t) {
         String sql = "INSERT INTO [user] "
-                + "(user_id, username, password, full_name, email, role, status) "
+                + "(user_id, username, password, full_name, email, status) "
                 + "VALUES (?,?,?,?,?,?,?)";
         
         try{
@@ -71,8 +39,7 @@ public class UserDAO implements IDAO<UserDTO, Integer>{
             ps.setString(3, t.getPassword());
             ps.setString(4, t.getFullName());
             ps.setString(5, t.getEmail());
-            ps.setString(6, t.getRole());
-            ps.setBoolean(7, t.isStatus());
+            ps.setBoolean(6, t.isStatus());
             
             return ps.executeUpdate() > 0;
         }catch(Exception e){
@@ -85,7 +52,7 @@ public class UserDAO implements IDAO<UserDTO, Integer>{
     public boolean update(UserDTO t) {
         String sql = "UPDATE [user] SET "
                 + "username = ?, password = ?, full_name = ?, "
-                + "email = ?, role = ?, status = ? "
+                + "email = ?, status = ? "
                 + "WHERE user_id = ?";
         try{
             Connection connect = DbUtils.getConnection();
@@ -95,9 +62,8 @@ public class UserDAO implements IDAO<UserDTO, Integer>{
             ps.setString(2, t.getPassword());
             ps.setString(3, t.getFullName());
             ps.setString(4, t.getEmail());
-            ps.setString(5, t.getRole());
-            ps.setBoolean(6, t.isStatus());
-            ps.setInt(7, t.getUserId());
+            ps.setBoolean(5, t.isStatus());
+            ps.setInt(6, t.getUserId());
             
             return ps.executeUpdate() > 0;
             
@@ -207,4 +173,4 @@ public class UserDAO implements IDAO<UserDTO, Integer>{
     
     
 }
->>>>>>> Code_in_here
+
