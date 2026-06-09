@@ -14,32 +14,30 @@ import java.util.ArrayList;
 public class UserDAO implements IDAO<UserDTO, Integer>{
     
     private UserDTO mapRow(ResultSet rs) throws SQLException {
-        return new UserDTO(
-                rs.getInt("user_id"),
-                rs.getString("username"),
-                rs.getString("password"),
-                rs.getString("full_name"),
-                rs.getString("email"),
-                rs.getString("role"),
-                rs.getBoolean("status")
-        );
+        UserDTO user = new UserDTO();
+        user.setUserId(rs.getInt("user_id"));
+        user.setUserName(rs.getString("username"));
+        user.setPassword(rs.getString("password"));
+        user.setFullName(rs.getString("full_name"));
+        user.setEmail(rs.getString("email"));
+        user.setStatus(user.takeStatus(rs.getString("status")));
+        
+        return user;
     }
 
     @Override
     public boolean insert(UserDTO t) {
         String sql = "INSERT INTO [user] "
-                + "(user_id, username, password, full_name, email, status) "
-                + "VALUES (?,?,?,?,?,?,?)";
+                + "(username, password, full_name, email) "
+                + "VALUES (?,?,?,?)";
         
         try{
             Connection connect = DbUtils.getConnection();
             PreparedStatement ps = connect.prepareStatement(sql);
-            ps.setInt(1, t.getUserId());
-            ps.setString(2, t.getUserName());
-            ps.setString(3, t.getPassword());
-            ps.setString(4, t.getFullName());
-            ps.setString(5, t.getEmail());
-            ps.setBoolean(6, t.isStatus());
+            ps.setString(1, t.getUserName());
+            ps.setString(2, t.getPassword());
+            ps.setString(3, t.getFullName());
+            ps.setString(4, t.getEmail());
             
             return ps.executeUpdate() > 0;
         }catch(Exception e){

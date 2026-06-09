@@ -1,25 +1,28 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package Models;
 
-/**
- *
- * @author ADMIN
- */
-public class UserRoleDTO {
-    private int roleId;
-    private String roleName;
-    private String description;
+import java.sql.Timestamp;
 
-    public UserRoleDTO(int roleId, String roleName, String description) {
+
+public class UserRoleDTO {
+    private int userId;
+    private int roleId;
+    private Timestamp assigedAt;
+
+    public UserRoleDTO(int userId, int roleId) {
+        this.userId = userId;
         this.roleId = roleId;
-        this.roleName = roleName;
-        this.description = description;
     }
 
     public UserRoleDTO() {
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public int getRoleId() {
@@ -30,21 +33,14 @@ public class UserRoleDTO {
         this.roleId = roleId;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public Timestamp getAssigedAt() {
+        return assigedAt;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setAssigedAt(Timestamp assigedAt) {
+        this.assigedAt = assigedAt;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
     
     
     

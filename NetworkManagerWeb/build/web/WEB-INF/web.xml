@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.5"
-         xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-                             http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-
-    <!-- ===== Servlets ===== -->
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <servlet>
         <servlet-name>LoginController</servlet-name>
         <servlet-class>Controller.LoginController</servlet-class>
     </servlet>
-
-    <!-- ===== Servlet Mappings ===== -->
+    <servlet>
+        <servlet-name>RegisterUserController</servlet-name>
+        <servlet-class>Controller.RegisterUserController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GoogleLoginController</servlet-name>
+        <servlet-class>Controller.GoogleLoginController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
         <url-pattern>/LoginController</url-pattern>
     </servlet-mapping>
-
-    <!-- ===== Session Config ===== -->
+    <servlet-mapping>
+        <servlet-name>RegisterUserController</servlet-name>
+        <url-pattern>/RegisterUserController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GoogleLoginController</servlet-name>
+        <url-pattern>/GoogleLoginController</url-pattern>
+    </servlet-mapping>
     <session-config>
-        <session-timeout>30</session-timeout>
+        <session-timeout>
+            30
+        </session-timeout>
     </session-config>
-
-    <!-- ===== Welcome File ===== -->
-    <!-- index.jsp is the verification/splash page (Step 1 of auth flow) -->
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>login.jsp</welcome-file>
     </welcome-file-list>
-
 </web-app>
