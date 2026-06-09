@@ -1,431 +1,493 @@
-<%-- 
-    login.jsp - Login Page
-    Step 3 of auth flow: After verification → user enters credentials
---%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Network Manager — Sign In</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-        <style>
-            :root {
-                --brand-dark: #0a0f1e;
-                --brand-blue: #1a6cff;
-                --brand-accent: #00e5ff;
-                --brand-surface: #111827;
-                --brand-border: #1e3a5f;
-                --brand-text: #e2e8f0;
-                --brand-muted: #64748b;
-                --brand-input-bg: #0d1526;
-            }
+<%-- login.jsp - Themed auth page (network media from /theme) --%>
+    <%@page contentType="text/html" pageEncoding="UTF-8" %>
+        <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+            <!DOCTYPE html>
+            <html lang="en">
 
-            body {
-                background-color: var(--brand-dark);
-                color: var(--brand-text);
-                font-family: 'IBM Plex Sans', sans-serif;
-                min-height: 100vh;
-                display: flex;
-                overflow: hidden;
-            }
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Network Manager — Sign In</title>
 
-            /* Left panel — branding */
-            .login-left {
-                background: linear-gradient(160deg, #0a1628 0%, #0d2347 50%, #0a1628 100%);
-                border-right: 1px solid var(--brand-border);
-                width: 42%;
-                min-height: 100vh;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                padding: 3rem 2.5rem;
-                position: relative;
-            }
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+                    rel="stylesheet">
+                <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-            /* Animated circuit lines on left panel */
-            .login-left::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background-image:
-                    linear-gradient(rgba(0,229,255,0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(0,229,255,0.05) 1px, transparent 1px);
-                background-size: 32px 32px;
-            }
+                <style>
+                    :root {
+                        --bg-0: #04060d;
+                        --bg-1: #0a1020;
+                        --surface: rgba(14, 20, 36, 0.78);
+                        --surface-2: rgba(20, 28, 48, 0.75);
+                        --border: rgba(146, 167, 223, 0.25);
+                        --text-primary: #f3f6ff;
+                        --text-muted: #a2b0d4;
+                        --danger: #ff6b81;
+                        --neon-purple: #8b5cf6;
+                        --neon-pink: #d946ef;
+                        --neon-blue: #60a5fa;
+                        --focus-ring: 0 0 0 4px rgba(139, 92, 246, 0.22);
+                        --shadow-main: 0 24px 55px rgba(0, 0, 0, 0.55);
+                        --radius-xl: 18px;
+                        --radius-md: 10px;
+                    }
 
-            .left-content {
-                position: relative;
-                z-index: 1;
-                text-align: center;
-            }
+                    * {
+                        box-sizing: border-box;
+                    }
 
-            .brand-badge {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                background: rgba(26,108,255,0.15);
-                border: 1px solid rgba(26,108,255,0.4);
-                border-radius: 2rem;
-                padding: 0.35rem 1rem;
-                font-family: 'IBM Plex Mono', monospace;
-                font-size: 0.7rem;
-                color: var(--brand-accent);
-                letter-spacing: 0.1em;
-                text-transform: uppercase;
-                margin-bottom: 2rem;
-            }
+                    body {
+                        margin: 0;
+                        min-height: 100vh;
+                        font-family: "Segoe UI", Arial, sans-serif;
+                        color: var(--text-primary);
+                        background: linear-gradient(135deg, #03050c 0%, #090f1d 45%, #04060d 100%);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 20px;
+                        overflow: hidden;
+                    }
 
-            .brand-icon {
-                width: 80px;
-                height: 80px;
-                background: linear-gradient(135deg, var(--brand-blue), var(--brand-accent));
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 2.2rem;
-                color: white;
-                margin: 0 auto 1.5rem;
-                box-shadow: 0 0 40px rgba(0,229,255,0.25);
-            }
+                    .bg-video {
+                        position: fixed;
+                        inset: 0;
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        opacity: 0.32;
+                        z-index: -3;
+                        filter: saturate(1.2) contrast(1.05);
+                    }
 
-            .brand-name {
-                font-family: 'IBM Plex Mono', monospace;
-                font-size: 1.5rem;
-                font-weight: 600;
-                color: var(--brand-text);
-                margin-bottom: 0.5rem;
-            }
+                    .bg-overlay {
+                        position: fixed;
+                        inset: 0;
+                        z-index: -2;
+                        background:
+                            linear-gradient(120deg, rgba(5, 8, 18, 0.82), rgba(6, 9, 20, 0.68)),
+                            radial-gradient(circle at 15% 20%, rgba(139, 92, 246, 0.22), transparent 34%),
+                            radial-gradient(circle at 86% 12%, rgba(96, 165, 250, 0.16), transparent 28%);
+                    }
 
-            .brand-desc {
-                font-size: 0.875rem;
-                color: var(--brand-muted);
-                line-height: 1.6;
-                max-width: 280px;
-                margin: 0 auto 2.5rem;
-            }
+                    .bg-grid {
+                        position: fixed;
+                        inset: 0;
+                        z-index: -1;
+                        background-image:
+                            linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+                        background-size: 72px 72px;
+                        opacity: .22;
+                        pointer-events: none;
+                    }
 
-            .feature-list {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-                text-align: left;
-                width: 100%;
-                max-width: 280px;
-            }
+                    .auth-shell {
+                        width: 100%;
+                        max-width: 1120px;
+                        min-height: 640px;
+                        border: 1px solid var(--border);
+                        border-radius: var(--radius-xl);
+                        background: rgba(8, 12, 24, 0.55);
+                        backdrop-filter: blur(10px);
+                        box-shadow: var(--shadow-main);
+                        overflow: hidden;
+                        display: grid;
+                        grid-template-columns: 1.06fr 0.94fr;
+                    }
 
-            .feature-list li {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                padding: 0.5rem 0;
-                font-size: 0.82rem;
-                color: #94a3b8;
-                border-bottom: 1px solid rgba(255,255,255,0.05);
-            }
+                    .left-panel {
+                        position: relative;
+                        padding: 46px;
+                        background:
+                            linear-gradient(145deg, rgba(6, 9, 20, 0.7), rgba(10, 14, 28, 0.5)),
+                            url('theme/original-f73343d902c4c7335f94cb0e9dc08fef.webp') center/cover no-repeat;
+                        border-right: 1px solid var(--border);
+                        display: flex;
+                        align-items: flex-end;
+                    }
 
-            .feature-list li:last-child { border-bottom: none; }
+                    .left-panel::after {
+                        content: "";
+                        position: absolute;
+                        inset: 0;
+                        background:
+                            linear-gradient(transparent 55%, rgba(3, 6, 16, 0.8) 100%),
+                            repeating-linear-gradient(90deg, rgba(96, 165, 250, 0.07) 0 1px, transparent 1px 72px);
+                        pointer-events: none;
+                    }
 
-            .feature-list li i {
-                color: var(--brand-accent);
-                font-size: 0.9rem;
-                flex-shrink: 0;
-            }
+                    .left-content {
+                        position: relative;
+                        z-index: 1;
+                        max-width: 460px;
+                    }
 
-            /* Right panel — form */
-            .login-right {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                padding: 3rem 2rem;
-                background: var(--brand-dark);
-            }
+                    .left-kicker {
+                        display: inline-block;
+                        margin-bottom: 14px;
+                        padding: 6px 12px;
+                        border-radius: 999px;
+                        font-size: 12px;
+                        letter-spacing: .08em;
+                        text-transform: uppercase;
+                        color: #dbc8ff;
+                        border: 1px solid rgba(139, 92, 246, 0.5);
+                        background: rgba(139, 92, 246, 0.18);
+                    }
 
-            .login-form-wrap {
-                width: 100%;
-                max-width: 380px;
-                animation: slideIn 0.5s ease both;
-                animation-delay: 0.1s;
-                opacity: 0;
-            }
+                    .left-title {
+                        margin: 0 0 10px;
+                        font-size: 48px;
+                        line-height: 1.05;
+                        font-weight: 800;
+                        text-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
+                    }
 
-            @keyframes slideIn {
-                from { opacity: 0; transform: translateX(20px); }
-                to   { opacity: 1; transform: translateX(0); }
-            }
+                    .left-sub {
+                        margin: 0 0 24px;
+                        font-size: 18px;
+                        line-height: 1.45;
+                        color: #d7def8;
+                        max-width: 430px;
+                    }
 
-            .form-heading {
-                margin-bottom: 2rem;
-            }
+                    .feature-list {
+                        list-style: none;
+                        margin: 0;
+                        padding: 0;
+                    }
 
-            .form-heading h2 {
-                font-size: 1.5rem;
-                font-weight: 600;
-                color: var(--brand-text);
-                margin-bottom: 0.25rem;
-            }
+                    .feature-list li {
+                        display: flex;
+                        gap: 10px;
+                        align-items: center;
+                        font-size: 14px;
+                        color: #d5dcf6;
+                        margin-bottom: 10px;
+                    }
 
-            .form-heading p {
-                font-size: 0.83rem;
-                color: var(--brand-muted);
-            }
+                    .feature-list i {
+                        color: #c8a9ff;
+                        font-size: 14px;
+                    }
 
-            .form-label {
-                font-size: 0.8rem;
-                font-weight: 600;
-                color: #94a3b8;
-                letter-spacing: 0.05em;
-                text-transform: uppercase;
-                margin-bottom: 0.4rem;
-            }
+                    .right-panel {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 36px 30px;
+                        background:
+                            radial-gradient(circle at 85% 20%, rgba(139, 92, 246, 0.14), transparent 32%),
+                            linear-gradient(180deg, rgba(14, 20, 36, 0.72), rgba(8, 12, 24, 0.84));
+                    }
 
-            .form-control {
-                background: var(--brand-input-bg);
-                border: 1px solid var(--brand-border);
-                color: var(--brand-text);
-                border-radius: 0.5rem;
-                padding: 0.65rem 0.875rem;
-                font-size: 0.9rem;
-                transition: border-color 0.2s, box-shadow 0.2s;
-            }
+                    .form-wrap {
+                        width: 100%;
+                        max-width: 380px;
+                    }
 
-            .form-control:focus {
-                background: var(--brand-input-bg);
-                border-color: var(--brand-blue);
-                box-shadow: 0 0 0 3px rgba(26,108,255,0.15);
-                color: var(--brand-text);
-                outline: none;
-            }
+                    .title {
+                        margin: 0 0 8px;
+                        font-size: 34px;
+                        font-weight: 800;
+                        text-align: center;
+                    }
 
-            .form-control::placeholder {
-                color: #374151;
-            }
+                    .sub {
+                        margin: 0 0 24px;
+                        text-align: center;
+                        color: var(--text-muted);
+                        font-size: 14px;
+                    }
 
-            .input-group-text {
-                background: var(--brand-input-bg);
-                border: 1px solid var(--brand-border);
-                color: var(--brand-muted);
-                border-radius: 0 0.5rem 0.5rem 0;
-            }
+                    .alert-error {
+                        border: 1px solid rgba(255, 107, 129, 0.45);
+                        background: rgba(255, 107, 129, 0.12);
+                        color: #ffc0cb;
+                        border-radius: var(--radius-md);
+                        font-size: 13px;
+                        padding: 10px 12px;
+                        margin-bottom: 14px;
+                        display: flex;
+                        gap: 8px;
+                        align-items: center;
+                    }
 
-            .input-group .form-control {
-                border-right: none;
-                border-radius: 0.5rem 0 0 0.5rem;
-            }
+                    .field {
+                        margin-bottom: 13px;
+                    }
 
-            .btn-login {
-                background: var(--brand-blue);
-                border: none;
-                color: white;
-                font-weight: 600;
-                font-size: 0.9rem;
-                padding: 0.7rem;
-                border-radius: 0.5rem;
-                width: 100%;
-                letter-spacing: 0.03em;
-                transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
-            }
+                    .field label {
+                        display: block;
+                        margin-bottom: 6px;
+                        font-size: 13px;
+                        color: #d9def2;
+                        font-weight: 600;
+                        letter-spacing: .02em;
+                    }
 
-            .btn-login:hover {
-                background: #2563eb;
-                box-shadow: 0 4px 16px rgba(26,108,255,0.4);
-                transform: translateY(-1px);
-                color: white;
-            }
+                    .input-wrap {
+                        position: relative;
+                    }
 
-            .btn-login:active {
-                transform: translateY(0);
-            }
+                    .input-wrap i {
+                        position: absolute;
+                        left: 12px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        color: #8ea0cd;
+                        font-size: 14px;
+                        pointer-events: none;
+                    }
 
-            .divider {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                color: var(--brand-muted);
-                font-size: 0.78rem;
-                margin: 1.25rem 0;
-            }
+                    .field input {
+                        width: 100%;
+                        height: 44px;
+                        border-radius: var(--radius-md);
+                        border: 1px solid var(--border);
+                        background: rgba(16, 23, 42, 0.72);
+                        color: var(--text-primary);
+                        padding: 0 12px 0 36px;
+                        font-size: 14px;
+                        outline: none;
+                        transition: border-color .2s, box-shadow .2s;
+                    }
 
-            .divider::before, .divider::after {
-                content: '';
-                flex: 1;
-                height: 1px;
-                background: var(--brand-border);
-            }
+                    .field input::placeholder {
+                        color: #7481a8;
+                    }
 
-            .alert-error {
-                background: rgba(239,68,68,0.1);
-                border: 1px solid rgba(239,68,68,0.3);
-                border-radius: 0.5rem;
-                color: #fca5a5;
-                font-size: 0.83rem;
-                padding: 0.65rem 0.875rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
+                    .field input:focus {
+                        border-color: var(--neon-purple);
+                        box-shadow: var(--focus-ring);
+                    }
 
-            .remember-row {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1.25rem;
-            }
+                    .password-row {
+                        position: relative;
+                    }
 
-            .form-check-input {
-                background-color: var(--brand-input-bg);
-                border-color: var(--brand-border);
-            }
+                    .toggle-pass {
+                        position: absolute;
+                        right: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        border: none;
+                        background: transparent;
+                        color: #93a0c8;
+                        cursor: pointer;
+                        padding: 4px;
+                    }
 
-            .form-check-input:checked {
-                background-color: var(--brand-blue);
-                border-color: var(--brand-blue);
-            }
+                    .btn-login {
+                        width: 100%;
+                        margin-top: 6px;
+                        border: none;
+                        border-radius: var(--radius-md);
+                        height: 46px;
+                        font-size: 15px;
+                        font-weight: 700;
+                        color: white;
+                        cursor: pointer;
+                        background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+                        box-shadow: 0 10px 22px rgba(139, 92, 246, 0.35);
+                    }
 
-            .form-check-label {
-                font-size: 0.82rem;
-                color: var(--brand-muted);
-            }
+                    .divider {
+                        margin: 16px 0 14px;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        color: #8391b8;
+                        font-size: 12px;
+                        text-transform: uppercase;
+                        letter-spacing: .08em;
+                    }
 
-            .footer-note {
-                margin-top: 2rem;
-                font-size: 0.75rem;
-                color: var(--brand-muted);
-                text-align: center;
-                font-family: 'IBM Plex Mono', monospace;
-            }
+                    .divider::before,
+                    .divider::after {
+                        content: "";
+                        flex: 1;
+                        height: 1px;
+                        background: #2a3558;
+                    }
 
-            /* Responsive: stack on small screens */
-            @media (max-width: 768px) {
-                body { flex-direction: column; }
-                .login-left {
-                    width: 100%;
-                    min-height: auto;
-                    padding: 2rem 1.5rem;
-                }
-                .feature-list { display: none; }
-            }
-        </style>
-    </head>
-    <body>
+                    .gbox {
+                        display: flex;
+                        justify-content: center;
+                        margin-bottom: 12px;
+                    }
 
-        <!-- Left Branding Panel -->
-        <div class="login-left">
-            <div class="left-content">
-                <div class="brand-badge">
-                    <i class="bi bi-shield-lock-fill"></i>
-                    Secure Portal
-                </div>
-                <div class="brand-icon">
-                    <i class="bi bi-wifi"></i>
-                </div>
-                <div class="brand-name">Network Manager</div>
-                <p class="brand-desc">University-wide network infrastructure management for devices, access points, and connectivity.</p>
+                    .register-link {
+                        text-align: center;
+                        font-size: 13px;
+                        color: #b7c2e6;
+                    }
 
-                <ul class="feature-list">
-                    <li><i class="bi bi-router-fill"></i> Real-time device monitoring</li>
-                    <li><i class="bi bi-reception-4"></i> Access point management</li>
-                    <li><i class="bi bi-bar-chart-fill"></i> Bandwidth analytics</li>
-                    <li><i class="bi bi-bell-fill"></i> Alert & notification system</li>
-                    <li><i class="bi bi-tools"></i> Maintenance scheduling</li>
-                    <li><i class="bi bi-ticket-perforated-fill"></i> Support ticket system</li>
-                </ul>
-            </div>
-        </div>
+                    .register-link a {
+                        color: #caa7ff;
+                        text-decoration: none;
+                        font-weight: 600;
+                    }
 
-        <!-- Right Form Panel -->
-        <div class="login-right">
-            <div class="login-form-wrap">
+                    .foot-note {
+                        margin-top: 18px;
+                        text-align: center;
+                        font-size: 11px;
+                        color: #7f8db4;
+                        letter-spacing: .06em;
+                        text-transform: uppercase;
+                    }
 
-                <div class="form-heading">
-                    <h2>Sign In</h2>
-                    <p>Enter your university credentials to continue</p>
-                </div>
+                    @media (max-width: 980px) {
+                        .auth-shell {
+                            grid-template-columns: 1fr;
+                            min-height: auto;
+                        }
 
-                <%-- Show error message if login failed --%>
-                <% String errorMsg = (String) request.getAttribute("errorMsg"); %>
-                <% if (errorMsg != null && !errorMsg.isEmpty()) { %>
-                <div class="alert-error mb-3">
-                    <i class="bi bi-exclamation-circle-fill"></i>
-                    <%= errorMsg %>
-                </div>
-                <% } %>
+                        .left-panel {
+                            min-height: 250px;
+                            padding: 30px 26px;
+                        }
 
-                <form action="LoginController" method="POST" autocomplete="off">
+                        .left-title {
+                            font-size: 36px;
+                        }
 
-                    <div class="mb-3">
-                        <label class="form-label" for="username">Username</label>
-                        <input type="text"
-                               class="form-control"
-                               id="username"
-                               name="username"
-                               placeholder="Enter your username"
-                               required
-                               autofocus>
-                    </div>
+                        .left-sub {
+                            font-size: 15px;
+                        }
 
-                    <div class="mb-3">
-                        <label class="form-label" for="password">Password</label>
-                        <div class="input-group">
-                            <input type="password"
-                                   class="form-control"
-                                   id="password"
-                                   name="password"
-                                   placeholder="Enter your password"
-                                   required>
-                            <span class="input-group-text" id="togglePwd" style="cursor:pointer;">
-                                <i class="bi bi-eye-slash" id="eyeIcon"></i>
-                            </span>
+                        .right-panel {
+                            padding: 28px 20px 30px;
+                        }
+                    }
+                </style>
+            </head>
+
+            <body>
+                <video class="bg-video" autoplay muted loop playsinline>
+                    <source src="theme/original-bbd8c0ff4dbd70e3f804581b5b16a73f.mp4" type="video/mp4">
+                </video>
+                <div class="bg-overlay"></div>
+                <div class="bg-grid"></div>
+
+                <div class="auth-shell">
+                    <section class="left-panel">
+                        <div class="left-content">
+                            <span class="left-kicker">Network Security Portal</span>
+                            <h1 class="left-title">Create your<br>connected workspace</h1>
+                            <p class="left-sub">
+                                Monitor routers, access points and network health in one secure platform.
+                            </p>
+                            <ul class="feature-list">
+                                <li><i class="bi bi-check-circle-fill"></i> Real-time device monitoring</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Access point analytics</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Alert and maintenance workflow</li>
+                            </ul>
                         </div>
-                    </div>
+                    </section>
 
-                    <div class="remember-row">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
-                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                    <section class="right-panel">
+                        <div class="form-wrap">
+                            <h2 class="title">Sign In</h2>
+                            <p class="sub">Enter your account credentials to continue</p>
+
+                            <% String errorMsg=(String) request.getAttribute("errorMsg"); %>
+                                <% if (errorMsg !=null && !errorMsg.isEmpty()) { %>
+                                    <div class="alert-error">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                        <span>
+                                            <%= errorMsg %>
+                                        </span>
+                                    </div>
+                                    <% } %>
+
+                                        <c:if test="${not empty error}">
+                                            <div class="alert-error">
+                                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                                <span>${error}</span>
+                                            </div>
+                                        </c:if>
+
+                                        <form action="LoginController" method="POST" autocomplete="off">
+                                            <div class="field">
+                                                <label for="username">Username or Email</label>
+                                                <div class="input-wrap">
+                                                    <i class="bi bi-person-fill"></i>
+                                                    <input type="text" id="username" name="username"
+                                                        placeholder="Enter your username or email" required autofocus>
+                                                </div>
+                                            </div>
+
+                                            <div class="field">
+                                                <label for="password">Password</label>
+                                                <div class="input-wrap password-row">
+                                                    <i class="bi bi-shield-lock-fill"></i>
+                                                    <input type="password" id="password" name="password"
+                                                        placeholder="Enter your password" required>
+                                                    <button class="toggle-pass" type="button" id="togglePwd"
+                                                        aria-label="Toggle password">
+                                                        <i class="bi bi-eye-slash" id="eyeIcon"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <button type="submit" class="btn-login">
+                                                <i class="bi bi-box-arrow-in-right"></i> Sign In
+                                            </button>
+                                        </form>
+
+                                        <div class="divider">or</div>
+
+                                        <div id="g_id_onload"
+                                            data-client_id="353952447542-f2u39lhvfn0j2ikufm0pbl9jcc84q1hj.apps.googleusercontent.com"
+                                            data-callback="handleGoogleLogin">
+                                        </div>
+                                        <div class="gbox">
+                                            <div class="g_id_signin" data-type="standard" data-text="signin_with"
+                                                data-shape="rectangular" data-logo_alignment="left">
+                                            </div>
+                                        </div>
+
+                                        <p class="register-link">
+                                            Don’t have an account?
+                                            <a href="user-form.jsp?source=normal">Create a new account</a>
+                                        </p>
+
+                                        <div class="foot-note">University Network Management System</div>
                         </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-login">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
-                    </button>
-
-                </form>
-
-                <div class="divider">or</div>
-
-                <div class="text-center" style="font-size:0.82rem; color: #64748b;">
-                    Contact your administrator if you cannot access your account.
+                    </section>
                 </div>
 
-                <div class="footer-note">
-                    &copy; University Network Management System
-                </div>
+                <script>
+                    document.getElementById('togglePwd').addEventListener('click', function () {
+                        const pwd = document.getElementById('password');
+                        const icon = document.getElementById('eyeIcon');
+                        if (pwd.type === 'password') {
+                            pwd.type = 'text';
+                            icon.className = 'bi bi-eye';
+                        } else {
+                            pwd.type = 'password';
+                            icon.className = 'bi bi-eye-slash';
+                        }
+                    });
 
-            </div>
-        </div>
+                    function handleGoogleLogin(response) {
+                        const form = document.createElement("form");
+                        form.method = "POST";
+                        form.action = "GoogleLoginController";
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-            // Toggle password visibility
-            document.getElementById('togglePwd').addEventListener('click', function () {
-                const pwd = document.getElementById('password');
-                const icon = document.getElementById('eyeIcon');
-                if (pwd.type === 'password') {
-                    pwd.type = 'text';
-                    icon.className = 'bi bi-eye';
-                } else {
-                    pwd.type = 'password';
-                    icon.className = 'bi bi-eye-slash';
-                }
-            });
-        </script>
-    </body>
-</html>
+                        const input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = "credential";
+                        input.value = response.credential;
+
+                        form.appendChild(input);
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                </script>
+            </body>
+
+            </html>

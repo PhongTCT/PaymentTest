@@ -1,607 +1,551 @@
-<%-- 
-    userDashboard.jsp - Dashboard for USER role
-    Accessible after login when roleID = 'USER'
---%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="Models.UserDTO"%>
-<%
-    // Session guard: redirect to login if not authenticated
-    UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
-    String role = (String) session.getAttribute("role");
-    if (currentUser == null || role == null || !role.equals("USER")) {
-        response.sendRedirect("login.jsp");
-        return;
-    }
-    String displayName = currentUser.getFullName() != null ? currentUser.getFullName() : currentUser.getUserName();
-%>
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Network Manager — My Dashboard</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-        <style>
-            :root {
-                --brand-dark: #0a0f1e;
-                --brand-blue: #1a6cff;
-                --brand-accent: #00e5ff;
-                --brand-surface: #111827;
-                --brand-border: #1e3a5f;
-                --brand-text: #e2e8f0;
-                --brand-muted: #64748b;
-                --sidebar-w: 240px;
-            }
+<%-- userDashboard.jsp - Dashboard for USER role Accessible after login when roleID='USER' --%>
+    <%@page contentType="text/html" pageEncoding="UTF-8" %>
+        <%@page import="Models.UserDTO" %>
+            <% UserDTO currentUser=(UserDTO) session.getAttribute("user"); String role=(String)
+                session.getAttribute("role"); if (currentUser==null || role==null || !role.equalsIgnoreCase("Viewer")) {
+                response.sendRedirect("login.jsp"); return; } String displayName=currentUser.getFullName() !=null ?
+                currentUser.getFullName() : currentUser.getUserName(); %>
+                <!DOCTYPE html>
+                <html lang="en">
 
-            body {
-                background: var(--brand-dark);
-                color: var(--brand-text);
-                font-family: 'IBM Plex Sans', sans-serif;
-                min-height: 100vh;
-            }
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Network Manager — My Dashboard</title>
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+                        rel="stylesheet">
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+                        rel="stylesheet">
+                    <style>
+                        :root {
+                            --bg-0: #05070d;
+                            --bg-1: #0b1020;
+                            --surface: #10172a;
+                            --surface-2: #161f36;
+                            --border: #2a3555;
+                            --text-primary: #f2f5ff;
+                            --text-muted: #9aa6c7;
+                            --neon-purple: #8b5cf6;
+                            --neon-pink: #d946ef;
+                            --neon-blue: #60a5fa;
+                            --sidebar-w: 250px;
+                            --radius-md: 10px;
+                            --radius-lg: 14px;
+                            --glow: 0 0 18px rgba(139, 92, 246, 0.22);
+                        }
 
-            /* ---- Sidebar ---- */
-            .sidebar {
-                position: fixed;
-                top: 0; left: 0; bottom: 0;
-                width: var(--sidebar-w);
-                background: var(--brand-surface);
-                border-right: 1px solid var(--brand-border);
-                display: flex;
-                flex-direction: column;
-                z-index: 100;
-                padding: 0;
-            }
+                        * {
+                            box-sizing: border-box;
+                        }
 
-            .sidebar-brand {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                padding: 1.25rem 1.25rem;
-                border-bottom: 1px solid var(--brand-border);
-                font-family: 'IBM Plex Mono', monospace;
-                font-size: 0.85rem;
-                font-weight: 600;
-                color: var(--brand-accent);
-                letter-spacing: 0.05em;
-            }
+                        body {
+                            margin: 0;
+                            background:
+                                linear-gradient(rgba(5, 8, 18, 0.84), rgba(6, 9, 20, 0.8)),
+                                radial-gradient(circle at 12% 12%, rgba(139, 92, 246, 0.16), transparent 28%),
+                                url('theme/original-d5209459af4999984ad44693bbcb28f7.webp') center/cover fixed no-repeat;
+                            color: var(--text-primary);
+                            min-height: 100vh;
+                            font-family: "Segoe UI", Arial, sans-serif;
+                        }
 
-            .sidebar-brand-icon {
-                width: 36px; height: 36px;
-                background: linear-gradient(135deg, var(--brand-blue), var(--brand-accent));
-                border-radius: 8px;
-                display: flex; align-items: center; justify-content: center;
-                font-size: 1rem; color: white; flex-shrink: 0;
-            }
+                        .sidebar {
+                            position: fixed;
+                            inset: 0 auto 0 0;
+                            width: var(--sidebar-w);
+                            background: linear-gradient(180deg, rgba(16, 23, 42, 0.96), rgba(10, 14, 28, 0.98));
+                            border-right: 1px solid var(--border);
+                            display: flex;
+                            flex-direction: column;
+                            z-index: 100;
+                            overflow-y: auto;
+                        }
 
-            .sidebar-section-label {
-                font-size: 0.65rem;
-                font-weight: 600;
-                letter-spacing: 0.12em;
-                text-transform: uppercase;
-                color: var(--brand-muted);
-                padding: 1rem 1.25rem 0.4rem;
-                font-family: 'IBM Plex Mono', monospace;
-            }
+                        .sidebar-brand {
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            padding: 16px 18px;
+                            border-bottom: 1px solid var(--border);
+                        }
 
-            .nav-item-link {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                padding: 0.6rem 1.25rem;
-                font-size: 0.875rem;
-                color: #94a3b8;
-                text-decoration: none;
-                border-radius: 0;
-                transition: background 0.15s, color 0.15s;
-                cursor: pointer;
-                border: none;
-                background: none;
-                width: 100%;
-                text-align: left;
-            }
+                        .sidebar-brand-icon {
+                            width: 38px;
+                            height: 38px;
+                            border-radius: 11px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: white;
+                            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+                            box-shadow: var(--glow);
+                        }
 
-            .nav-item-link:hover {
-                background: rgba(26,108,255,0.1);
-                color: var(--brand-text);
-            }
+                        .brand-title {
+                            line-height: 1.1;
+                            font-size: 13px;
+                            font-weight: 700;
+                            letter-spacing: .04em;
+                            text-transform: uppercase;
+                            color: #d8c9ff;
+                        }
 
-            .nav-item-link.active {
-                background: rgba(26,108,255,0.18);
-                color: var(--brand-accent);
-                font-weight: 600;
-                border-right: 3px solid var(--brand-blue);
-            }
+                        .sidebar-section-label {
+                            font-size: 11px;
+                            letter-spacing: .12em;
+                            text-transform: uppercase;
+                            color: #7f8db4;
+                            padding: 14px 18px 6px;
+                            font-weight: 600;
+                        }
 
-            .nav-item-link i { font-size: 1rem; flex-shrink: 0; }
+                        .nav-item-link {
+                            border: none;
+                            background: transparent;
+                            width: 100%;
+                            text-align: left;
+                            color: #a5b2d8;
+                            font-size: 14px;
+                            padding: 10px 18px;
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            cursor: pointer;
+                            transition: .18s ease;
+                        }
 
-            .sidebar-footer {
-                margin-top: auto;
-                padding: 1rem 1.25rem;
-                border-top: 1px solid var(--brand-border);
-            }
+                        .nav-item-link i {
+                            width: 16px;
+                            text-align: center;
+                        }
 
-            .user-info-chip {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                padding: 0.6rem 0;
-            }
+                        .nav-item-link:hover {
+                            background: rgba(139, 92, 246, 0.12);
+                            color: #e5ddff;
+                        }
 
-            .user-avatar {
-                width: 36px; height: 36px;
-                background: linear-gradient(135deg, #3b82f6, #06b6d4);
-                border-radius: 50%;
-                display: flex; align-items: center; justify-content: center;
-                font-size: 0.9rem; color: white; font-weight: 600; flex-shrink: 0;
-            }
+                        .nav-item-link.active {
+                            background: linear-gradient(90deg, rgba(139, 92, 246, 0.3), rgba(217, 70, 239, 0.08));
+                            color: #f2ecff;
+                            border-right: 3px solid var(--neon-purple);
+                            font-weight: 600;
+                        }
 
-            .user-info-name { font-size: 0.83rem; font-weight: 600; color: var(--brand-text); }
-            .user-info-role { font-size: 0.7rem; color: var(--brand-muted); font-family: 'IBM Plex Mono', monospace; }
+                        .sidebar-footer {
+                            margin-top: auto;
+                            padding: 14px 18px;
+                            border-top: 1px solid var(--border);
+                        }
 
-            /* ---- Main content ---- */
-            .main-content {
-                margin-left: var(--sidebar-w);
-                padding: 0;
-                min-height: 100vh;
-            }
+                        .user-avatar {
+                            width: 34px;
+                            height: 34px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 14px;
+                            color: white;
+                            font-weight: 700;
+                            background: linear-gradient(135deg, #8b5cf6, #60a5fa);
+                        }
 
-            .topbar {
-                background: var(--brand-surface);
-                border-bottom: 1px solid var(--brand-border);
-                padding: 1rem 1.75rem;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                position: sticky;
-                top: 0;
-                z-index: 50;
-            }
+                        .main-content {
+                            margin-left: var(--sidebar-w);
+                            min-height: 100vh;
+                        }
 
-            .topbar-title {
-                font-size: 1.1rem;
-                font-weight: 600;
-                color: var(--brand-text);
-            }
+                        .topbar {
+                            position: sticky;
+                            top: 0;
+                            z-index: 60;
+                            padding: 14px 24px;
+                            border-bottom: 1px solid var(--border);
+                            background: rgba(12, 17, 32, 0.9);
+                            backdrop-filter: blur(8px);
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                        }
 
-            .topbar-title span {
-                font-size: 0.8rem;
-                color: var(--brand-muted);
-                font-weight: 400;
-                margin-left: 0.5rem;
-                font-family: 'IBM Plex Mono', monospace;
-            }
+                        .topbar-title {
+                            font-size: 18px;
+                            font-weight: 700;
+                        }
 
-            .page-body {
-                padding: 1.75rem;
-            }
+                        .topbar-breadcrumb {
+                            font-size: 12px;
+                            color: var(--text-muted);
+                            margin-left: 8px;
+                        }
 
-            /* Stat cards */
-            .stat-card {
-                background: var(--brand-surface);
-                border: 1px solid var(--brand-border);
-                border-radius: 0.75rem;
-                padding: 1.25rem 1.5rem;
-                transition: border-color 0.2s;
-            }
+                        .role-badge-viewer {
+                            border-radius: 999px;
+                            padding: 4px 10px;
+                            font-size: 11px;
+                            letter-spacing: .08em;
+                            text-transform: uppercase;
+                            font-weight: 700;
+                            color: #ddd6fe;
+                            background: rgba(139, 92, 246, 0.16);
+                            border: 1px solid rgba(139, 92, 246, 0.4);
+                        }
 
-            .stat-card:hover { border-color: var(--brand-blue); }
+                        .page-body {
+                            padding: 22px;
+                        }
 
-            .stat-card .stat-icon {
-                width: 44px; height: 44px;
-                border-radius: 10px;
-                display: flex; align-items: center; justify-content: center;
-                font-size: 1.2rem;
-                margin-bottom: 0.75rem;
-            }
+                        .stat-card,
+                        .section-card {
+                            background: linear-gradient(180deg, rgba(20, 28, 48, 0.92), rgba(15, 21, 38, 0.95));
+                            border: 1px solid var(--border);
+                            border-radius: var(--radius-lg);
+                        }
 
-            .stat-card .stat-value {
-                font-size: 1.6rem;
-                font-weight: 700;
-                font-family: 'IBM Plex Mono', monospace;
-                color: var(--brand-text);
-                line-height: 1;
-                margin-bottom: 0.25rem;
-            }
+                        .stat-card {
+                            padding: 16px;
+                            height: 100%;
+                        }
 
-            .stat-card .stat-label {
-                font-size: 0.78rem;
-                color: var(--brand-muted);
-            }
+                        .stat-icon {
+                            width: 42px;
+                            height: 42px;
+                            border-radius: 12px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin-bottom: 10px;
+                            font-size: 18px;
+                        }
 
-            /* Content section cards */
-            .section-card {
-                background: var(--brand-surface);
-                border: 1px solid var(--brand-border);
-                border-radius: 0.75rem;
-                overflow: hidden;
-            }
+                        .stat-value {
+                            font-size: 26px;
+                            font-weight: 800;
+                            line-height: 1;
+                            margin-bottom: 4px;
+                        }
 
-            .section-card-header {
-                padding: 1rem 1.25rem;
-                border-bottom: 1px solid var(--brand-border);
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
+                        .stat-label {
+                            font-size: 12px;
+                            color: var(--text-muted);
+                        }
 
-            .section-card-header h6 {
-                font-size: 0.875rem;
-                font-weight: 600;
-                color: var(--brand-text);
-                margin: 0;
-            }
+                        .stat-delta {
+                            font-size: 11px;
+                            margin-top: 4px;
+                            color: #9fb0d9;
+                        }
 
-            .section-card-body { padding: 1.25rem; }
+                        .section-card-header {
+                            padding: 14px 16px;
+                            border-bottom: 1px solid var(--border);
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                        }
 
-            .placeholder-box {
-                background: rgba(26,108,255,0.05);
-                border: 1px dashed var(--brand-border);
-                border-radius: 0.5rem;
-                padding: 2.5rem 1rem;
-                text-align: center;
-                color: var(--brand-muted);
-                font-size: 0.83rem;
-            }
+                        .section-card-header h6 {
+                            margin: 0;
+                            font-size: 14px;
+                            font-weight: 700;
+                            color: #ebedff;
+                        }
 
-            .placeholder-box i { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+                        .section-card-body {
+                            padding: 16px;
+                        }
 
-            .badge-role {
-                background: rgba(26,108,255,0.2);
-                color: var(--brand-accent);
-                border: 1px solid rgba(26,108,255,0.3);
-                font-size: 0.68rem;
-                font-family: 'IBM Plex Mono', monospace;
-                letter-spacing: 0.08em;
-                padding: 0.2rem 0.55rem;
-                border-radius: 1rem;
-            }
+                        .placeholder-box {
+                            background: rgba(139, 92, 246, 0.06);
+                            border: 1px dashed rgba(139, 92, 246, 0.35);
+                            border-radius: var(--radius-md);
+                            padding: 34px 12px;
+                            text-align: center;
+                            color: #95a4cb;
+                            font-size: 13px;
+                        }
 
-            /* Notification badge */
-            .notif-dot {
-                width: 8px; height: 8px;
-                background: #f59e0b;
-                border-radius: 50%;
-                display: inline-block;
-                margin-left: 0.25rem;
-                vertical-align: middle;
-            }
+                        .page-section {
+                            display: none;
+                        }
 
-            /* Page visibility */
-            .page-section { display: none; }
-            .page-section.active { display: block; }
+                        .page-section.active {
+                            display: block;
+                        }
 
-            @media (max-width: 768px) {
-                .sidebar { display: none; }
-                .main-content { margin-left: 0; }
-            }
-        </style>
-    </head>
-    <body>
+                        .btn-theme {
+                            border: 1px solid rgba(139, 92, 246, 0.5);
+                            background: rgba(139, 92, 246, 0.2);
+                            color: #e8ddff;
+                            border-radius: 8px;
+                            padding: 6px 10px;
+                            font-size: 12px;
+                            font-weight: 600;
+                        }
 
-        <!-- ===== SIDEBAR ===== -->
-        <nav class="sidebar">
-            <div class="sidebar-brand">
-                <div class="sidebar-brand-icon"><i class="bi bi-wifi"></i></div>
-                <div>
-                    <div>Network<br>Manager</div>
-                </div>
-            </div>
+                        .btn-theme:hover {
+                            filter: brightness(1.1);
+                        }
 
-            <div class="sidebar-section-label">Overview</div>
-            <button class="nav-item-link active" onclick="showPage('dashboard', this)">
-                <i class="bi bi-grid-1x2-fill"></i> Dashboard
-            </button>
+                        @media (max-width: 900px) {
+                            .sidebar {
+                                display: none;
+                            }
 
-            <div class="sidebar-section-label">My Account</div>
-            <button class="nav-item-link" onclick="showPage('profile', this)">
-                <i class="bi bi-person-circle"></i> My Profile
-            </button>
-            <button class="nav-item-link" onclick="showPage('mydevices', this)">
-                <i class="bi bi-laptop"></i> My Devices
-            </button>
-            <button class="nav-item-link" onclick="showPage('notifications', this)">
-                <i class="bi bi-bell"></i> Notifications
-                <span class="notif-dot ms-auto"></span>
-            </button>
+                            .main-content {
+                                margin-left: 0;
+                            }
+                        }
+                    </style>
+                </head>
 
-            <div class="sidebar-section-label">Support</div>
-            <button class="nav-item-link" onclick="showPage('tickets', this)">
-                <i class="bi bi-ticket-perforated"></i> My Tickets
-            </button>
-            <button class="nav-item-link" onclick="showPage('createticket', this)">
-                <i class="bi bi-plus-circle"></i> Create Ticket
-            </button>
+                <body>
 
-            <div class="sidebar-section-label">Settings</div>
-            <button class="nav-item-link" onclick="showPage('changepassword', this)">
-                <i class="bi bi-key"></i> Change Password
-            </button>
-
-            <div class="sidebar-footer">
-                <div class="user-info-chip">
-                    <div class="user-avatar"><%= displayName.charAt(0) %></div>
-                    <div>
-                        <div class="user-info-name"><%= displayName %></div>
-                        <div class="user-info-role">USER</div>
-                    </div>
-                </div>
-                <a href="LoginController?action=logout" class="nav-item-link text-danger mt-1" style="padding-left:0;">
-                    <i class="bi bi-box-arrow-left"></i> Sign Out
-                </a>
-            </div>
-        </nav>
-
-        <!-- ===== MAIN CONTENT ===== -->
-        <div class="main-content">
-
-            <!-- Topbar -->
-            <div class="topbar">
-                <div class="topbar-title">
-                    <span id="pageTitle">Dashboard</span>
-                    <span id="pageBreadcrumb">/ Overview</span>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <span class="badge-role">USER</span>
-                    <span style="font-size:0.82rem; color:var(--brand-muted);">
-                        Welcome, <strong style="color:var(--brand-text);"><%= displayName %></strong>
-                    </span>
-                </div>
-            </div>
-
-            <div class="page-body">
-
-                <!-- ===== PAGE: DASHBOARD ===== -->
-                <div class="page-section active" id="page-dashboard">
-                    <div class="row g-3 mb-4">
-                        <div class="col-6 col-md-3">
-                            <div class="stat-card">
-                                <div class="stat-icon" style="background:rgba(26,108,255,0.15); color:#1a6cff;">
-                                    <i class="bi bi-laptop"></i>
-                                </div>
-                                <div class="stat-value">2</div>
-                                <div class="stat-label">My Devices</div>
-                            </div>
+                    <nav class="sidebar">
+                        <div class="sidebar-brand">
+                            <div class="sidebar-brand-icon"><i class="bi bi-diagram-3-fill"></i></div>
+                            <div class="brand-title">Network<br>Manager</div>
                         </div>
-                        <div class="col-6 col-md-3">
-                            <div class="stat-card">
-                                <div class="stat-icon" style="background:rgba(245,158,11,0.15); color:#f59e0b;">
-                                    <i class="bi bi-ticket-perforated"></i>
-                                </div>
-                                <div class="stat-value">1</div>
-                                <div class="stat-label">Open Tickets</div>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="stat-card">
-                                <div class="stat-icon" style="background:rgba(34,197,94,0.15); color:#22c55e;">
-                                    <i class="bi bi-reception-4"></i>
-                                </div>
-                                <div class="stat-value">Online</div>
-                                <div class="stat-label">Network Status</div>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="stat-card">
-                                <div class="stat-icon" style="background:rgba(0,229,255,0.12); color:#00e5ff;">
-                                    <i class="bi bi-bell"></i>
-                                </div>
-                                <div class="stat-value">3</div>
-                                <div class="stat-label">Notifications</div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="section-card">
-                                <div class="section-card-header">
-                                    <h6><i class="bi bi-laptop me-2"></i>My Active Devices</h6>
-                                    <button class="btn btn-sm" style="font-size:0.75rem; color:var(--brand-accent);" onclick="showPage('mydevices', null)">View All</button>
+                        <div class="sidebar-section-label">Overview</div>
+                        <button class="nav-item-link active" onclick="showPage('dashboard', this)">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </button>
+
+                        <div class="sidebar-section-label">Account</div>
+                        <button class="nav-item-link" onclick="showPage('profile', this)">
+                            <i class="bi bi-person"></i> My Profile
+                        </button>
+                        <button class="nav-item-link" onclick="showPage('mydevices', this)">
+                            <i class="bi bi-phone"></i> My Devices
+                        </button>
+                        <button class="nav-item-link" onclick="showPage('notifications', this)">
+                            <i class="bi bi-bell"></i> Notifications
+                        </button>
+
+                        <div class="sidebar-section-label">Support</div>
+                        <button class="nav-item-link" onclick="showPage('tickets', this)">
+                            <i class="bi bi-ticket-perforated"></i> My Tickets
+                        </button>
+                        <button class="nav-item-link" onclick="showPage('createticket', this)">
+                            <i class="bi bi-plus-circle"></i> Create Ticket
+                        </button>
+
+                        <div class="sidebar-section-label">Settings</div>
+                        <button class="nav-item-link" onclick="showPage('changepassword', this)">
+                            <i class="bi bi-key"></i> Change Password
+                        </button>
+
+                        <div class="sidebar-footer">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="user-avatar">
+                                    <%= displayName.charAt(0) %>
                                 </div>
-                                <div class="section-card-body">
-                                    <div class="placeholder-box">
-                                        <i class="bi bi-laptop"></i>
-                                        Device list will appear here
+                                <div>
+                                    <div style="font-size:13px;font-weight:600;color:#e8ecff;">
+                                        <%= displayName %>
+                                    </div>
+                                    <div style="font-size:11px;color:#8ea0cb;">
+                                        <%= role %>
                                     </div>
                                 </div>
                             </div>
+                            <a href="LoginController?action=logout" class="nav-item-link text-danger"
+                                style="padding-left:0;">
+                                <i class="bi bi-box-arrow-left"></i> Sign Out
+                            </a>
                         </div>
-                        <div class="col-md-6">
-                            <div class="section-card">
-                                <div class="section-card-header">
-                                    <h6><i class="bi bi-ticket-perforated me-2"></i>Recent Tickets</h6>
-                                    <button class="btn btn-sm" style="font-size:0.75rem; color:var(--brand-accent);" onclick="showPage('tickets', null)">View All</button>
-                                </div>
-                                <div class="section-card-body">
-                                    <div class="placeholder-box">
-                                        <i class="bi bi-ticket-perforated"></i>
-                                        Your support tickets will appear here
-                                    </div>
-                                </div>
+                    </nav>
+
+                    <div class="main-content">
+                        <div class="topbar">
+                            <div>
+                                <span class="topbar-title" id="pageTitle">Dashboard</span>
+                                <span class="topbar-breadcrumb" id="pageBreadcrumb">/ Overview</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="role-badge-viewer">
+                                    <%= role %>
+                                </span>
+                                <span style="font-size:13px;color:#9db0db;">Welcome, <strong style="color:#f2f5ff;">
+                                        <%= displayName %>
+                                    </strong></span>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- ===== PAGE: PROFILE ===== -->
-                <div class="page-section" id="page-profile">
-                    <div class="section-card">
-                        <div class="section-card-header">
-                            <h6><i class="bi bi-person-circle me-2"></i>My Profile</h6>
-                        </div>
-                        <div class="section-card-body">
-                            <div class="row g-3">
-                                <div class="col-md-4 text-center">
-                                    <div class="user-avatar mx-auto mb-3" style="width:72px;height:72px;font-size:2rem;">
-                                        <%= displayName.charAt(0) %>
-                                    </div>
-                                    <div style="font-weight:600;"><%= displayName %></div>
-                                    <div style="font-size:0.78rem;color:var(--brand-muted);font-family:'IBM Plex Mono',monospace;">USER</div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="row g-2">
-                                        <div class="col-12 col-sm-6">
-                                            <label class="form-label" style="font-size:0.75rem;color:var(--brand-muted);text-transform:uppercase;letter-spacing:.05em;">Full Name</label>
-                                            <div class="form-control" style="background:rgba(255,255,255,0.04);border-color:var(--brand-border);color:var(--brand-text);"><%= displayName %></div>
+                        <div class="page-body">
+                            <div class="page-section active" id="page-dashboard">
+                                <div class="row g-3 mb-4">
+                                    <div class="col-6 col-md-3">
+                                        <div class="stat-card">
+                                            <div class="stat-icon"
+                                                style="background:rgba(34,197,94,0.16);color:#4ade80;"><i
+                                                    class="bi bi-wifi"></i></div>
+                                            <div class="stat-value" style="color:#4ade80;">Good</div>
+                                            <div class="stat-label">WiFi Status</div>
+                                            <div class="stat-delta">Campus network stable</div>
                                         </div>
-                                        <div class="col-12 col-sm-6">
-                                            <label class="form-label" style="font-size:0.75rem;color:var(--brand-muted);text-transform:uppercase;letter-spacing:.05em;">Username</label>
-                                            <div class="form-control" style="background:rgba(255,255,255,0.04);border-color:var(--brand-border);color:var(--brand-text);"><%= currentUser.getUserName() %></div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="stat-card">
+                                            <div class="stat-icon"
+                                                style="background:rgba(96,165,250,0.16);color:#60a5fa;"><i
+                                                    class="bi bi-phone"></i></div>
+                                            <div class="stat-value">2</div>
+                                            <div class="stat-label">My Devices</div>
+                                            <div class="stat-delta">Connected to account</div>
                                         </div>
-                                        <div class="col-12">
-                                            <label class="form-label" style="font-size:0.75rem;color:var(--brand-muted);text-transform:uppercase;letter-spacing:.05em;">Email</label>
-                                            <div class="form-control" style="background:rgba(255,255,255,0.04);border-color:var(--brand-border);color:var(--brand-text);">
-                                                <%= (currentUser.getEmail() != null && !currentUser.getEmail().isEmpty()) ? currentUser.getEmail() : "—" %>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="stat-card">
+                                            <div class="stat-icon"
+                                                style="background:rgba(245,158,11,0.16);color:#f59e0b;"><i
+                                                    class="bi bi-bell"></i></div>
+                                            <div class="stat-value">3</div>
+                                            <div class="stat-label">Notifications</div>
+                                            <div class="stat-delta">Unread updates</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="stat-card">
+                                            <div class="stat-icon"
+                                                style="background:rgba(139,92,246,0.16);color:#c4b5fd;"><i
+                                                    class="bi bi-ticket-perforated"></i></div>
+                                            <div class="stat-value">1</div>
+                                            <div class="stat-label">Open Tickets</div>
+                                            <div class="stat-delta">Support in progress</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="page-section" id="page-profile">
+                                <div class="section-card">
+                                    <div class="section-card-header">
+                                        <h6><i class="bi bi-person me-2"></i>My Profile</h6>
+                                    </div>
+                                    <div class="section-card-body">
+                                        <div class="placeholder-box">
+                                            Profile details will appear here<br>
+                                            <small>Name, email, role, account status</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="page-section" id="page-mydevices">
+                                <div class="section-card">
+                                    <div class="section-card-header">
+                                        <h6><i class="bi bi-phone me-2"></i>My Devices</h6>
+                                    </div>
+                                    <div class="section-card-body">
+                                        <div class="placeholder-box">
+                                            Registered devices list will appear here<br>
+                                            <small>Device name, MAC, IP, last seen</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="page-section" id="page-notifications">
+                                <div class="section-card">
+                                    <div class="section-card-header">
+                                        <h6><i class="bi bi-bell me-2"></i>Notifications</h6>
+                                    </div>
+                                    <div class="section-card-body">
+                                        <div class="placeholder-box">Your notifications feed will appear here</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="page-section" id="page-tickets">
+                                <div class="section-card">
+                                    <div class="section-card-header">
+                                        <h6><i class="bi bi-ticket-perforated me-2"></i>My Tickets</h6>
+                                    </div>
+                                    <div class="section-card-body">
+                                        <div class="placeholder-box">
+                                            Your support tickets will appear here<br>
+                                            <small>Ticket ID, status, response time</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="page-section" id="page-createticket">
+                                <div class="section-card">
+                                    <div class="section-card-header">
+                                        <h6><i class="bi bi-plus-circle me-2"></i>Create Ticket</h6>
+                                    </div>
+                                    <div class="section-card-body">
+                                        <div class="placeholder-box">
+                                            Ticket creation form will appear here<br>
+                                            <small>Issue type, description, priority</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="page-section" id="page-changepassword">
+                                <div class="section-card">
+                                    <div class="section-card-header">
+                                        <h6><i class="bi bi-key me-2"></i>Change Password</h6>
+                                    </div>
+                                    <div class="section-card-body">
+                                        <form style="max-width:420px;">
+                                            <div class="mb-3">
+                                                <label class="form-label" style="font-size:12px;color:#9fb0d8;">Current
+                                                    Password</label>
+                                                <input type="password" class="form-control"
+                                                    style="background:#0f162b;border-color:var(--border);color:#e7ecff;"
+                                                    placeholder="Enter current password">
                                             </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <label class="form-label" style="font-size:0.75rem;color:var(--brand-muted);text-transform:uppercase;letter-spacing:.05em;">Status</label>
-                                            <div>
-                                                <span class="badge bg-success">Active</span>
+                                            <div class="mb-3">
+                                                <label class="form-label" style="font-size:12px;color:#9fb0d8;">New
+                                                    Password</label>
+                                                <input type="password" class="form-control"
+                                                    style="background:#0f162b;border-color:var(--border);color:#e7ecff;"
+                                                    placeholder="Enter new password">
                                             </div>
-                                        </div>
+                                            <div class="mb-3">
+                                                <label class="form-label" style="font-size:12px;color:#9fb0d8;">Confirm
+                                                    New Password</label>
+                                                <input type="password" class="form-control"
+                                                    style="background:#0f162b;border-color:var(--border);color:#e7ecff;"
+                                                    placeholder="Confirm new password">
+                                            </div>
+                                            <button type="submit" class="btn-theme"><i
+                                                    class="bi bi-check2-circle me-1"></i>Update Password</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- ===== PAGE: MY DEVICES ===== -->
-                <div class="page-section" id="page-mydevices">
-                    <div class="section-card">
-                        <div class="section-card-header">
-                            <h6><i class="bi bi-laptop me-2"></i>My Registered Devices</h6>
-                        </div>
-                        <div class="section-card-body">
-                            <div class="placeholder-box">
-                                <i class="bi bi-laptop"></i>
-                                Your registered network devices will appear here.<br>
-                                <small>Device name, MAC address, IP, and connection status.</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+                    <script>
+                        const pageTitles = {
+                            'dashboard': ['Dashboard', '/ Overview'],
+                            'profile': ['My Profile', '/ Account'],
+                            'mydevices': ['My Devices', '/ Account'],
+                            'notifications': ['Notifications', '/ Account'],
+                            'tickets': ['My Tickets', '/ Support'],
+                            'createticket': ['Create Ticket', '/ Support'],
+                            'changepassword': ['Change Password', '/ Settings']
+                        };
 
-                <!-- ===== PAGE: NOTIFICATIONS ===== -->
-                <div class="page-section" id="page-notifications">
-                    <div class="section-card">
-                        <div class="section-card-header">
-                            <h6><i class="bi bi-bell me-2"></i>Notifications</h6>
-                        </div>
-                        <div class="section-card-body">
-                            <div class="placeholder-box">
-                                <i class="bi bi-bell"></i>
-                                System notifications and alerts will appear here.
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        function showPage(pageId, triggerEl) {
+                            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+                            document.querySelectorAll('.nav-item-link').forEach(b => b.classList.remove('active'));
+                            const section = document.getElementById('page-' + pageId);
+                            if (section) section.classList.add('active');
+                            if (triggerEl) triggerEl.classList.add('active');
+                            const [title, crumb] = pageTitles[pageId] || ['Dashboard', '/ Overview'];
+                            document.getElementById('pageTitle').textContent = title;
+                            document.getElementById('pageBreadcrumb').textContent = crumb;
+                        }
+                    </script>
+                </body>
 
-                <!-- ===== PAGE: MY TICKETS ===== -->
-                <div class="page-section" id="page-tickets">
-                    <div class="section-card">
-                        <div class="section-card-header">
-                            <h6><i class="bi bi-ticket-perforated me-2"></i>My Support Tickets</h6>
-                        </div>
-                        <div class="section-card-body">
-                            <div class="placeholder-box">
-                                <i class="bi bi-ticket-perforated"></i>
-                                Your submitted support tickets will appear here.<br>
-                                <small>Title, status, date created.</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ===== PAGE: CREATE TICKET ===== -->
-                <div class="page-section" id="page-createticket">
-                    <div class="section-card" style="max-width:600px;">
-                        <div class="section-card-header">
-                            <h6><i class="bi bi-plus-circle me-2"></i>Create Support Ticket</h6>
-                        </div>
-                        <div class="section-card-body">
-                            <form>
-                                <div class="mb-3">
-                                    <label class="form-label" style="font-size:0.8rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;">Title</label>
-                                    <input type="text" class="form-control" style="background:#0d1526;border-color:var(--brand-border);color:var(--brand-text);" placeholder="Brief description of your issue">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label" style="font-size:0.8rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;">Description</label>
-                                    <textarea class="form-control" rows="5" style="background:#0d1526;border-color:var(--brand-border);color:var(--brand-text);" placeholder="Describe your issue in detail..."></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label" style="font-size:0.8rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;">Related Device (optional)</label>
-                                    <select class="form-select" style="background:#0d1526;border-color:var(--brand-border);color:var(--brand-text);">
-                                        <option value="">— None —</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn" style="background:var(--brand-blue);color:white;font-weight:600;">
-                                    <i class="bi bi-send me-2"></i>Submit Ticket
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ===== PAGE: CHANGE PASSWORD ===== -->
-                <div class="page-section" id="page-changepassword">
-                    <div class="section-card" style="max-width:480px;">
-                        <div class="section-card-header">
-                            <h6><i class="bi bi-key me-2"></i>Change Password</h6>
-                        </div>
-                        <div class="section-card-body">
-                            <form>
-                                <div class="mb-3">
-                                    <label class="form-label" style="font-size:0.8rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;">Current Password</label>
-                                    <input type="password" class="form-control" style="background:#0d1526;border-color:var(--brand-border);color:var(--brand-text);" placeholder="Current password">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label" style="font-size:0.8rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;">New Password</label>
-                                    <input type="password" class="form-control" style="background:#0d1526;border-color:var(--brand-border);color:var(--brand-text);" placeholder="New password">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label" style="font-size:0.8rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;">Confirm New Password</label>
-                                    <input type="password" class="form-control" style="background:#0d1526;border-color:var(--brand-border);color:var(--brand-text);" placeholder="Repeat new password">
-                                </div>
-                                <button type="submit" class="btn" style="background:var(--brand-blue);color:white;font-weight:600;">
-                                    <i class="bi bi-check2-circle me-2"></i>Update Password
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-            </div><!-- end page-body -->
-        </div><!-- end main-content -->
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-            const pageTitles = {
-                'dashboard':      ['Dashboard',       '/ Overview'],
-                'profile':        ['My Profile',      '/ Account'],
-                'mydevices':      ['My Devices',      '/ Account'],
-                'notifications':  ['Notifications',   '/ Account'],
-                'tickets':        ['My Tickets',      '/ Support'],
-                'createticket':   ['Create Ticket',   '/ Support'],
-                'changepassword': ['Change Password', '/ Settings']
-            };
-
-            function showPage(pageId, triggerEl) {
-                // Hide all sections
-                document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-                document.querySelectorAll('.nav-item-link').forEach(b => b.classList.remove('active'));
-
-                document.getElementById('page-' + pageId).classList.add('active');
-                if (triggerEl) triggerEl.classList.add('active');
-
-                const [title, crumb] = pageTitles[pageId] || ['Dashboard', '/ Overview'];
-                document.getElementById('pageTitle').textContent = title;
-                document.getElementById('pageBreadcrumb').textContent = crumb;
-            }
-        </script>
-    </body>
-</html>
+                </html>

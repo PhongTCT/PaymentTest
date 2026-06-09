@@ -9,14 +9,11 @@ public class UserDTO {
      private String email;
      private boolean status;
 
-    public UserDTO(int userId, String userName, String password, String fullName, String email, String role, boolean status) {
-
-        this.userId = userId;
+    public UserDTO( String userName, String password, String fullName, String email) {
         this.userName = userName;
         this.password = password;
         this.fullName = fullName;
         this.email = email;
-        this.status = status;
     }
 
     public UserDTO() {
@@ -68,5 +65,10 @@ public class UserDTO {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+    
+    //String sql -> boolean
+    public boolean takeStatus(String status){
+        return (status.equalsIgnoreCase("ACTIVE"));
     }
 }
