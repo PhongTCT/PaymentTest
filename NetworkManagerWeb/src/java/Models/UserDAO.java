@@ -169,6 +169,24 @@ public class UserDAO implements IDAO<UserDTO, Integer>{
     }
 
     
-    
+    //============ Tim kiem danh sach bang keyword ===================
+    public ArrayList<UserDTO> searchListByKeyword(String keyword) {
+        ArrayList<UserDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM [user] WHERE username LIKE ? OR email LIKE ? OR full_name LIKE ?";
+        try {
+            Connection conn = DbUtils.getConnection();
+            PreparedStatement pst = conn.prepareStatement(sql);
+            String searchPattern = "%" + keyword + "%";
+            pst.setString(1, searchPattern);
+            pst.setString(2, searchPattern);
+            pst.setString(3, searchPattern);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }
-

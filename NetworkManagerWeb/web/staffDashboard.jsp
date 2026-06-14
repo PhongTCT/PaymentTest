@@ -1,5 +1,6 @@
 <%-- staffDashboard.jsp - Dashboard for staff members --%>
     <%@page contentType="text/html" pageEncoding="UTF-8" %>
+    <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
         <%@page import="Models.UserDTO" %>
             <% UserDTO currentUser=(UserDTO) session.getAttribute("user"); String role=(String)
                 session.getAttribute("role"); if (currentUser==null || role==null || (!role.equalsIgnoreCase("Admin") &&
@@ -414,15 +415,15 @@
 
                         <% if (isAdmin) { %>
                             <div class="sidebar-section-label">Administration</div>
-                            <button class="nav-item-link" onclick="showPage('users', this)">
+                            <a href="UserController?action=list" class="nav-item-link text-decoration-none">
                                 <i class="bi bi-people"></i> Manage Users
-                            </button>
-                            <button class="nav-item-link" onclick="showPage('authlogs', this)">
+                            </a>
+                            <a href="AuthLogController" class="nav-item-link text-decoration-none">
                                 <i class="bi bi-shield-check"></i> Auth Logs
-                            </button>
-                            <button class="nav-item-link" onclick="showPage('systemlogs', this)">
+                            </a>
+                            <a href="SystemLogController" class="nav-item-link text-decoration-none">
                                 <i class="bi bi-journal-text"></i> System Logs
-                            </button>
+                            </a>
                             <% } %>
 
                                 <div class="sidebar-footer">
@@ -784,36 +785,52 @@
                         </div>
                     </div>
 
-                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
                     <script>
                         const pageTitles = {
-                            'dashboard': ['Dashboard', '/ Overview'],
-                            'devices': ['Network Devices', '/ Infrastructure'],
-                            'accesspoints': ['Access Points', '/ Infrastructure'],
-                            'routers': ['Routers', '/ Infrastructure'],
-                            'switches': ['Switches', '/ Infrastructure'],
-                            'vlan': ['VLAN', '/ Infrastructure'],
-                            'ipmanage': ['IP Management', '/ Infrastructure'],
-                            'bandwidth': ['Bandwidth Usage', '/ Monitoring'],
-                            'wifianalytics': ['WiFi Analytics', '/ Monitoring'],
-                            'alerts': ['Network Alerts', '/ Monitoring'],
-                            'tickets': ['Support Tickets', '/ Management'],
-                            'maintenance': ['Maintenance Schedule', '/ Management'],
-                            'rooms': ['Rooms', '/ Management'],
-                            'users': ['User Management', '/ Administration'],
-                            'authlogs': ['Auth Logs', '/ Administration'],
-                            'systemlogs': ['System Logs', '/ Administration']
+                            dashboard:     { title: 'Dashboard',             breadcrumb: '/ Overview' },
+                            devices:       { title: 'Network Devices',       breadcrumb: '/ Infrastructure' },
+                            accesspoints:  { title: 'Access Points',         breadcrumb: '/ Infrastructure' },
+                            routers:       { title: 'Routers',               breadcrumb: '/ Infrastructure' },
+                            switches:      { title: 'Switches',              breadcrumb: '/ Infrastructure' },
+                            vlan:          { title: 'VLAN Management',       breadcrumb: '/ Infrastructure' },
+                            ipmanage:      { title: 'IP Address Management', breadcrumb: '/ Infrastructure' },
+                            bandwidth:     { title: 'Bandwidth Usage',       breadcrumb: '/ Monitoring' },
+                            wifianalytics: { title: 'WiFi Analytics',        breadcrumb: '/ Monitoring' },
+                            alerts:        { title: 'Network Alerts',        breadcrumb: '/ Monitoring' },
+                            tickets:       { title: 'Support Tickets',       breadcrumb: '/ Support' },
+                            maintenance:   { title: 'Maintenance Schedule',  breadcrumb: '/ Support' },
+                            rooms:         { title: 'Room / Area Map',       breadcrumb: '/ Facilities' },
+                            users:         { title: 'Manage Users',          breadcrumb: '/ Administration' },
+                            authlogs:      { title: 'Authentication Logs',   breadcrumb: '/ Administration' },
+                            systemlogs:    { title: 'System Logs',           breadcrumb: '/ Administration' }
                         };
 
-                        function showPage(pageId, triggerEl) {
-                            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-                            document.querySelectorAll('.nav-item-link').forEach(b => b.classList.remove('active'));
-                            const section = document.getElementById('page-' + pageId);
-                            if (section) section.classList.add('active');
-                            if (triggerEl) triggerEl.classList.add('active');
-                            const [title, crumb] = pageTitles[pageId] || ['Dashboard', '/ Overview'];
-                            document.getElementById('pageTitle').textContent = title;
-                            document.getElementById('pageBreadcrumb').textContent = crumb;
+                        function showPage(pageKey, clickedBtn) {
+                            // Hide all page sections
+                            document.querySelectorAll('.page-section').forEach(function(sec) {
+                                sec.classList.remove('active');
+                            });
+
+                            // Show the target section
+                            var target = document.getElementById('page-' + pageKey);
+                            if (target) {
+                                target.classList.add('active');
+                            }
+
+                            // Update active state on sidebar buttons
+                            document.querySelectorAll('.nav-item-link').forEach(function(btn) {
+                                btn.classList.remove('active');
+                            });
+                            if (clickedBtn) {
+                                clickedBtn.classList.add('active');
+                            }
+
+                            // Update topbar title and breadcrumb
+                            var info = pageTitles[pageKey] || { title: pageKey, breadcrumb: '' };
+                            var titleEl = document.getElementById('pageTitle');
+                            var breadEl = document.getElementById('pageBreadcrumb');
+                            if (titleEl) titleEl.textContent = info.title;
+                            if (breadEl) breadEl.textContent = info.breadcrumb;
                         }
                     </script>
                 </body>

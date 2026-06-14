@@ -50,7 +50,7 @@ public class SystemLogDAO {
             "ORDER BY created_at DESC";
     
     
-   //================== FUNCTIONS: ======================
+   //====================== FUNCTIONS: ======================
     
     public boolean insert(SystemLogDTO log){
         try{
@@ -81,7 +81,7 @@ public class SystemLogDAO {
         }
     }
     
-    // 
+    // Find all logs
     public ArrayList<SystemLogDTO> findAll() {
         ArrayList<SystemLogDTO> list = new ArrayList<>();
 
@@ -101,7 +101,7 @@ public class SystemLogDAO {
         return list;
     } 
     
-    //
+    //find all user's logs
     public ArrayList<SystemLogDTO> findByUser(int userId){
         ArrayList<SystemLogDTO> list = new ArrayList<>();
 
@@ -125,7 +125,7 @@ public class SystemLogDAO {
         return list;
     }
     
-    //
+    //find logs by date
     public ArrayList<SystemLogDTO> findByDate(Date date){
         ArrayList<SystemLogDTO> list = new ArrayList<>();
         
