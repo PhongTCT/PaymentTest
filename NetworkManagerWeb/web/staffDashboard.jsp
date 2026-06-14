@@ -1,12 +1,22 @@
 <%-- staffDashboard.jsp - Dashboard for staff members --%>
     <%@page contentType="text/html" pageEncoding="UTF-8" %>
     <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-        <%@page import="Models.UserDTO" %>
-            <% UserDTO currentUser=(UserDTO) session.getAttribute("user"); String role=(String)
-                session.getAttribute("role"); if (currentUser==null || role==null || (!role.equalsIgnoreCase("Admin") &&
-                !role.equalsIgnoreCase("Technician"))) { response.sendRedirect("login.jsp"); return; } String
-                displayName=currentUser.getFullName() !=null ? currentUser.getFullName() : currentUser.getUserName();
-                boolean isAdmin=role.equalsIgnoreCase("Admin"); %>
+    <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+        <%@page import="Models.RouterDAO" %>
+        <%@page import="Models.RouterDTO" %>
+        <%@page import="java.util.ArrayList" %>
+        <c:set var="currentUser" value="${sessionScope.user}" />
+        <c:set var="role" value="${sessionScope.role}" />
+        <c:set var="roleLower" value="${fn:toLowerCase(role)}" />
+        <c:if test="${empty currentUser || empty role || (roleLower ne 'admin' && roleLower ne 'technician')}">
+            <c:redirect url="login.jsp" />
+        </c:if>
+        <c:set var="displayName" value="${empty currentUser.fullName ? currentUser.userName : currentUser.fullName}" />
+        <c:set var="isAdmin" value="${roleLower eq 'admin'}" />
+        <%
+            RouterDAO routerDAO = new RouterDAO();
+            ArrayList<RouterDTO> routerList = routerDAO.ListAll();
+        %>
                 <!DOCTYPE html>
                 <html lang="en">
 
@@ -413,7 +423,7 @@
                             <i class="bi bi-building"></i> Rooms
                         </button>
 
-                        <% if (isAdmin) { %>
+                        <c:if test="${isAdmin}">
                             <div class="sidebar-section-label">Administration</div>
                             <a href="UserController?action=list" class="nav-item-link text-decoration-none">
                                 <i class="bi bi-people"></i> Manage Users
@@ -424,19 +434,19 @@
                             <a href="SystemLogController" class="nav-item-link text-decoration-none">
                                 <i class="bi bi-journal-text"></i> System Logs
                             </a>
-                            <% } %>
+                        </c:if>
 
                                 <div class="sidebar-footer">
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <div class="user-avatar <%= isAdmin ? " admin-avatar" : "tech-avatar" %>">
-                                            <%= displayName.charAt(0) %>
+                                        <div class="user-avatar ${isAdmin ? 'admin-avatar' : 'tech-avatar'}">
+                                            ${fn:substring(displayName, 0, 1)}
                                         </div>
                                         <div>
                                             <div style="font-size:13px;font-weight:600;color:#e8ecff;">
-                                                <%= displayName %>
+                                                ${displayName}
                                             </div>
                                             <div style="font-size:11px;color:#8ea0cb;">
-                                                <%= role %>
+                                                ${role}
                                             </div>
                                         </div>
                                     </div>
@@ -454,10 +464,10 @@
                                 <span class="topbar-breadcrumb" id="pageBreadcrumb">/ Overview</span>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="<%= isAdmin ? " role-badge-admin" : "role-badge-tech" %>"><%= role %>
+                                <span class="${isAdmin ? 'role-badge-admin' : 'role-badge-tech'}">${role}
                                 </span>
                                 <span style="font-size:13px;color:#9db0db;">Welcome, <strong style="color:#f2f5ff;">
-                                        <%= displayName %>
+                                        ${displayName}
                                     </strong></span>
                             </div>
                         </div>
@@ -626,7 +636,7 @@
                                 </div>
                             </div>
 
-                            <% String[][] infraPages={ {"devices","bi-laptop","Network Devices","Device name, MAC address, IP, owner, type, status"}, {"accesspoints","bi-reception-4","Access Points","AP name, SSID, IP, connected users, status, room"}, {"routers","bi-router","Routers","Router name, IP, MAC, model, firmware, status"}, {"switches","bi-hdd-network","Switches","Switch name, total/used ports, IP, status"}, {"vlan","bi-diagram-3","VLAN Management","VLAN name, subnet, purpose"}, {"ipmanage","bi-globe","IP Address Management","IP address, assigned to, status"} }; %>
+                            <% String[][] infraPages={ {"devices","bi-laptop","Network Devices","Device name, MAC address, IP, owner, type, status"}, {"accesspoints","bi-reception-4","Access Points","AP name, SSID, IP, connected users, status, room"}, {"switches","bi-hdd-network","Switches","Switch name, total/used ports, IP, status"}, {"vlan","bi-diagram-3","VLAN Management","VLAN name, subnet, purpose"}, {"ipmanage","bi-globe","IP Address Management","IP address, assigned to, status"} }; %>
                                 <% for (String[] p : infraPages) { %>
                                     <div class="page-section" id="page-<%= p[0] %>">
                                         <div class="section-card">
@@ -649,6 +659,81 @@
                                         </div>
                                     </div>
                                     <% } %>
+
+                                        <div class="page-section" id="page-routers">
+                                            <div class="section-card">
+                                                <div class="section-card-header">
+                                                    <h6><i class="bi bi-router me-2"></i>Routers</h6>
+                                                    <a class="btn-theme text-decoration-none" href="MainController?action=routerAdd&returnTo=dashboard">
+                                                        <i class="bi bi-plus-lg me-1"></i>Add New
+                                                    </a>
+                                                </div>
+                                                <div class="section-card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-dark table-striped table-hover align-middle mb-0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>ID</th>
+                                                                    <th>Name</th>
+                                                                    <th>IP</th>
+                                                                    <th>MAC</th>
+                                                                    <th>Model</th>
+                                                                    <th>Firmware</th>
+                                                                    <th>Status</th>
+                                                                    <th>Location</th>
+                                                                    <th>Room</th>
+                                                                    <th>Actions</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <% if (routerList != null && !routerList.isEmpty()) {
+                                                                    for (RouterDTO router : routerList) { %>
+                                                                        <tr>
+                                                                            <td><%= router.getRouterId() %></td>
+                                                                            <td><%= router.getRouterName() %></td>
+                                                                            <td><%= router.getIpAddress() %></td>
+                                                                            <td><%= router.getMacAddress() %></td>
+                                                                            <td><%= router.getModel() %></td>
+                                                                            <td><%= router.getFirmware() %></td>
+                                                                            <td>
+                                                                                <form action="MainController" method="post" class="d-flex gap-2">
+                                                                                    <input type="hidden" name="action" value="routerUpdateStatus">
+                                                                                    <input type="hidden" name="id" value="<%= router.getRouterId() %>">
+                                                                                    <input type="hidden" name="returnTo" value="dashboard">
+                                                                                    <select class="form-select form-select-sm bg-dark text-light border-secondary" name="status">
+                                                                                        <option value="ONLINE" <%= "ONLINE".equalsIgnoreCase(router.getStatus()) ? "selected" : "" %>>ONLINE</option>
+                                                                                        <option value="OFFLINE" <%= "OFFLINE".equalsIgnoreCase(router.getStatus()) ? "selected" : "" %>>OFFLINE</option>
+                                                                                        <option value="MAINTENANCE" <%= "MAINTENANCE".equalsIgnoreCase(router.getStatus()) ? "selected" : "" %>>MAINTENANCE</option>
+                                                                                    </select>
+                                                                                    <button class="btn btn-sm btn-outline-success" type="submit">Update</button>
+                                                                                </form>
+                                                                            </td>
+                                                                            <td><%= router.getLocation() %></td>
+                                                                            <td><%= router.getRoomId() %></td>
+                                                                            <td>
+                                                                                <a class="btn btn-sm btn-outline-light" href="MainController?action=routerEdit&id=<%= router.getRouterId() %>&returnTo=dashboard">Edit</a>
+                                                                                <a class="btn btn-sm btn-outline-warning" href="MainController?action=routerRestart&id=<%= router.getRouterId() %>&returnTo=dashboard">Restart</a>
+                                                                                <a class="btn btn-sm btn-outline-danger" href="MainController?action=routerDelete&routerId=<%= router.getRouterId() %>&returnTo=dashboard">Delete</a>
+                                                                            </td>
+                                                                        </tr>
+                                                                <%  }
+                                                                } else { %>
+                                                                    <tr>
+                                                                        <td colspan="10">
+                                                                            <div class="placeholder-box my-0">
+                                                                                <i class="bi bi-router" style="font-size:26px;"></i><br>
+                                                                                Router list will appear here<br>
+                                                                                <small>Router name, IP, MAC, model, firmware, status</small>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                <% } %>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <div class="page-section" id="page-bandwidth">
                                             <div class="section-card">
@@ -732,9 +817,9 @@
                                             <div class="section-card">
                                                 <div class="section-card-header">
                                                     <h6><i class="bi bi-building me-2"></i>Room Management</h6>
-                                                    <% if (isAdmin) { %><button class="btn-theme"><i
+                                                    <c:if test="${isAdmin}"><button class="btn-theme"><i
                                                                 class="bi bi-plus-lg me-1"></i>Add Room</button>
-                                                        <% } %>
+                                                    </c:if>
                                                 </div>
                                                 <div class="section-card-body">
                                                     <div class="placeholder-box">Room list will appear here</div>
@@ -742,7 +827,7 @@
                                             </div>
                                         </div>
 
-                                        <% if (isAdmin) { %>
+                                        <c:if test="${isAdmin}">
                                             <div class="page-section" id="page-users">
                                                 <div class="section-card">
                                                     <div class="section-card-header">
@@ -781,7 +866,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <% } %>
+                                        </c:if>
                         </div>
                     </div>
 
@@ -832,6 +917,14 @@
                             if (titleEl) titleEl.textContent = info.title;
                             if (breadEl) breadEl.textContent = info.breadcrumb;
                         }
+
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var params = new URLSearchParams(window.location.search);
+                            var page = params.get('page');
+                            if (page && pageTitles[page]) {
+                                showPage(page, null);
+                            }
+                        });
                     </script>
                 </body>
 

@@ -1,9 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="Models.RouterDTO"%>
-<%
-    ArrayList<RouterDTO> routers = (ArrayList<RouterDTO>) request.getAttribute("routers");
-%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,7 +12,10 @@
     <div class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1 class="h3 mb-0">Routers</h1>
-            <a class="btn btn-primary" href="MainController?action=routerAdd">Add Router</a>
+            <div>
+                <a class="btn btn-secondary" href="staffDashboard.jsp">Back Dashboard</a>
+                <a class="btn btn-primary" href="MainController?action=routerAdd">Add Router</a>
+            </div>
         </div>
 
         <div class="card">
@@ -37,35 +36,44 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <%
-                            if (routers != null && !routers.isEmpty()) {
-                                for (RouterDTO router : routers) {
-                        %>
-                        <tr>
-                            <td><%= router.getRouterId() %></td>
-                            <td><%= router.getRouterName() %></td>
-                            <td><%= router.getIpAddress() %></td>
-                            <td><%= router.getMacAddress() %></td>
-                            <td><%= router.getModel() %></td>
-                            <td><%= router.getFirmware() %></td>
-                            <td><span class="badge text-bg-secondary"><%= router.getStatus() %></span></td>
-                            <td><%= router.getLocation() %></td>
-                            <td><%= router.getRoomId() %></td>
-                            <td>
-                                <a class="btn btn-sm btn-outline-primary" href="MainController?action=routerEdit&id=<%= router.getRouterId() %>">Edit</a>
-                                <a class="btn btn-sm btn-outline-danger" href="MainController?action=routerDelete&id=<%= router.getRouterId() %>">Delete</a>
-                            </td>
-                        </tr>
-                        <%
-                                }
-                            } else {
-                        %>
-                        <tr>
-                            <td colspan="10" class="text-center text-muted py-4">No routers found.</td>
-                        </tr>
-                        <%
-                            }
-                        %>
+                        <c:choose>
+                            <c:when test="${not empty routers}">
+                                <c:forEach var="router" items="${routers}">
+                                    <tr>
+                                        <td>${router.routerId}</td>
+                                        <td><c:out value="${router.routerName}" /></td>
+                                        <td><c:out value="${router.ipAddress}" /></td>
+                                        <td><c:out value="${router.macAddress}" /></td>
+                                        <td><c:out value="${router.model}" /></td>
+                                        <td><c:out value="${router.firmware}" /></td>
+                                        <td>
+                                            <form action="MainController" method="post" class="d-flex gap-2">
+                                                <input type="hidden" name="action" value="routerUpdateStatus">
+                                                <input type="hidden" name="id" value="${router.routerId}">
+                                                <select class="form-select form-select-sm" name="status">
+                                                    <option value="ONLINE" ${router.status eq 'ONLINE' ? 'selected' : ''}>ONLINE</option>
+                                                    <option value="OFFLINE" ${router.status eq 'OFFLINE' ? 'selected' : ''}>OFFLINE</option>
+                                                    <option value="MAINTENANCE" ${router.status eq 'MAINTENANCE' ? 'selected' : ''}>MAINTENANCE</option>
+                                                </select>
+                                                <button class="btn btn-sm btn-outline-success" type="submit">Update</button>
+                                            </form>
+                                        </td>
+                                        <td><c:out value="${router.location}" /></td>
+                                        <td>${router.roomId}</td>
+                                        <td>
+                                            <a class="btn btn-sm btn-outline-primary" href="MainController?action=routerEdit&id=${router.routerId}">Edit</a>
+                                            <a class="btn btn-sm btn-outline-warning" href="MainController?action=routerRestart&id=${router.routerId}">Restart</a>
+                                            <a class="btn btn-sm btn-outline-danger" href="MainController?action=routerDelete&routerId=${router.routerId}">Delete</a>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <tr>
+                                    <td colspan="10" class="text-center text-muted py-4">No routers found.</td>
+                                </tr>
+                            </c:otherwise>
+                        </c:choose>
                     </tbody>
                 </table>
             </div>
