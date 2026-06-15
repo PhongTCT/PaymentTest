@@ -121,7 +121,7 @@ public class RoomServlet extends HttpServlet {
             return;
         }
 
-        response.sendRedirect("MainController?action=roomList");
+        redirectAfterAction(request, response);
     }
 
     private void updateRoom(HttpServletRequest request, HttpServletResponse response)
@@ -157,7 +157,7 @@ public class RoomServlet extends HttpServlet {
             return;
         }
 
-        response.sendRedirect("MainController?action=roomList");
+        redirectAfterAction(request, response);
     }
 
     private void deleteRoom(HttpServletRequest request, HttpServletResponse response)
@@ -171,8 +171,20 @@ public class RoomServlet extends HttpServlet {
             roomDAO.remove(room);
         }
 
-        response.sendRedirect("MainController?action=roomList");
+        redirectAfterAction(request, response);
     }
+    private void redirectAfterAction(HttpServletRequest request,
+        HttpServletResponse response) throws IOException {
+
+    String returnTo = request.getParameter("returnTo");
+
+    if ("dashboard".equals(returnTo)) {
+        response.sendRedirect("staffDashboard.jsp?page=rooms");
+        return;
+    }
+
+    response.sendRedirect("MainController?action=roomList");
+}
 
     private int parseIntOrDefault(String value, int defaultValue) {
         if (value == null || value.trim().isEmpty()) {

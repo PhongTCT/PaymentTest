@@ -9,6 +9,10 @@
         <servlet-class>Controller.RouterServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>RoomServlet</servlet-name>
+        <servlet-class>Controller.RoomServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>MainController</servlet-name>
         <servlet-class>Controller.MainController</servlet-class>
     </servlet>
@@ -47,6 +51,10 @@
     <servlet-mapping>
         <servlet-name>RegisterUserController</servlet-name>
         <url-pattern>/RegisterUserController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RoomServlet</servlet-name>
+        <url-pattern>/RoomServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GoogleLoginController</servlet-name>

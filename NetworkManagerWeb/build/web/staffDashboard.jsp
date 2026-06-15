@@ -4,6 +4,8 @@
     <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
         <%@page import="Models.RouterDAO" %>
         <%@page import="Models.RouterDTO" %>
+        <%@page import="Models.RoomDAO" %>
+        <%@page import="Models.RoomDTO" %>
         <%@page import="java.util.ArrayList" %>
         <c:set var="currentUser" value="${sessionScope.user}" />
         <c:set var="role" value="${sessionScope.role}" />
@@ -16,6 +18,10 @@
         <%
             RouterDAO routerDAO = new RouterDAO();
             ArrayList<RouterDTO> routerList = routerDAO.ListAll();
+        %>
+        <%
+            RoomDAO roomDAO = new RoomDAO();
+            ArrayList<RoomDTO> roomList = roomDAO.ListAll();
         %>
                 <!DOCTYPE html>
                 <html lang="en">
@@ -815,14 +821,84 @@
 
                                         <div class="page-section" id="page-rooms">
                                             <div class="section-card">
+
                                                 <div class="section-card-header">
-                                                    <h6><i class="bi bi-building me-2"></i>Room Management</h6>
-                                                    <c:if test="${isAdmin}"><button class="btn-theme"><i
-                                                                class="bi bi-plus-lg me-1"></i>Add Room</button>
-                                                    </c:if>
+                                                    <h6>
+                                                        <i class="bi bi-building me-2"></i>
+                                                        Quản lý phòng
+                                                    </h6>
+
+                                                    <a class="btn-theme text-decoration-none"
+                                                       href="MainController?action=roomAdd&returnTo=dashboard">
+                                                        <i class="bi bi-plus-lg me-1"></i>
+                                                        Thêm phòng
+                                                    </a>
                                                 </div>
+
                                                 <div class="section-card-body">
-                                                    <div class="placeholder-box">Room list will appear here</div>
+                                                    <div class="table-responsive">
+
+                                                        <table class="table table-dark table-striped table-hover align-middle mb-0">
+
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>ID</th>
+                                                                    <th>Tên phòng</th>
+                                                                    <th>Tòa nhà</th>
+                                                                    <th>Tầng</th>
+                                                                    <th>Sức chứa</th>
+                                                                    <th>Thao tác</th>
+                                                                </tr>
+                                                            </thead>
+
+                                                            <tbody>
+                                                                <% if (roomList != null && !roomList.isEmpty()) {
+                                                                    for (RoomDTO room : roomList) {
+                                                                %>
+
+                                                                <tr>
+                                                                    <td><%= room.getRoomId() %></td>
+                                                                    <td><%= room.getRoomName() %></td>
+                                                                    <td><%= room.getBuilding() %></td>
+                                                                    <td><%= room.getFloor() %></td>
+                                                                    <td><%= room.getCapacity() %></td>
+
+                                                                    <td>
+                                                                        <a class="btn btn-sm btn-outline-light"
+                                                                           href="MainController?action=roomEdit&id=<%= room.getRoomId() %>&returnTo=dashboard">
+                                                                            Sửa
+                                                                        </a>
+
+                                                                        <a class="btn btn-sm btn-outline-danger"
+                                                                           href="MainController?action=roomDelete&roomId=<%= room.getRoomId() %>&returnTo=dashboard"
+                                                                           onclick="return confirm('Bạn có chắc muốn xóa phòng này không?');">
+                                                                            Xóa
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <%
+                                                                    }
+                                                                } else {
+                                                                %>
+
+                                                                <tr>
+                                                                    <td colspan="6">
+                                                                        <div class="placeholder-box my-0">
+                                                                            <i class="bi bi-building" style="font-size:26px;"></i>
+                                                                            <br>
+                                                                            Chưa có dữ liệu phòng.
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <%
+                                                                }
+                                                                %>
+                                                            </tbody>
+
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
