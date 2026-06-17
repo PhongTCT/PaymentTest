@@ -32,6 +32,7 @@ public class RouterDAO implements IDAO<RouterDTO, Integer> {
                 rs.getInt("room_id")
         );
     }
+    //
 
     @Override
     public boolean insert(RouterDTO t) {
