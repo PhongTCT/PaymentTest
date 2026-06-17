@@ -110,6 +110,15 @@ public class MainController extends HttpServlet {
             case "maintenanceComplete":
                 url = "MaintenanceServlet";
                 break;
+             //===============Room==================
+            case "roomList":
+            case "roomAdd":
+            case "roomEdit":
+            case "roomInsert":
+            case "roomUpdate":
+            case "roomDelete":
+                url = "RoomServlet";
+                break;
                 
                 //default is Login page!
             default:

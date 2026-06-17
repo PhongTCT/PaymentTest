@@ -9,6 +9,10 @@
         <servlet-class>Controller.RouterServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>RoomServlet</servlet-name>
+        <servlet-class>Controller.RoomServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>MainController</servlet-name>
         <servlet-class>Controller.MainController</servlet-class>
     </servlet>
@@ -40,6 +44,10 @@
         <servlet-name>MaintenanceServlet</servlet-name>
         <servlet-class>Controller.MaintenanceServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>VLANServlet</servlet-name>
+        <servlet-class>Controller.VLANServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
         <url-pattern>/LoginController</url-pattern>
@@ -55,6 +63,10 @@
     <servlet-mapping>
         <servlet-name>RegisterUserController</servlet-name>
         <url-pattern>/RegisterUserController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RoomServlet</servlet-name>
+        <url-pattern>/RoomServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GoogleLoginController</servlet-name>
@@ -79,6 +91,10 @@
     <servlet-mapping>
         <servlet-name>MaintenanceServlet</servlet-name>
         <url-pattern>/MaintenanceServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>VLANServlet</servlet-name>
+        <url-pattern>/VLANServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

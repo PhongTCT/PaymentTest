@@ -10,6 +10,8 @@
         <%@page import="Models.NetworkDeviceDTO" %>
         <%@page import="Models.MaintenanceScheduleDAO" %>
         <%@page import="Models.MaintenanceScheduleDTO" %>
+        <%@page import="Models.RoomDAO" %>
+        <%@page import="Models.RoomDTO" %>
         <%@page import="java.util.ArrayList" %>
         <%@page import="java.util.HashMap" %>
         <c:set var="currentUser" value="${sessionScope.user}" />
@@ -41,6 +43,10 @@
             MaintenanceScheduleDAO maintenanceDAO = new MaintenanceScheduleDAO();
             ArrayList<MaintenanceScheduleDTO> tasks = maintenanceDAO.ListAll();
             request.setAttribute("tasks", tasks);
+        %>
+        <%
+            RoomDAO roomDAO = new RoomDAO();
+            ArrayList<RoomDTO> roomList = roomDAO.ListAll();
         %>
                 <!DOCTYPE html>
                 <html lang="en">
@@ -1039,14 +1045,106 @@
 
                                         <div class="page-section" id="page-rooms">
                                             <div class="section-card">
+
                                                 <div class="section-card-header">
-                                                    <h6><i class="bi bi-building me-2"></i>Room Management</h6>
-                                                    <c:if test="${isAdmin}"><button class="btn-theme"><i
-                                                                class="bi bi-plus-lg me-1"></i>Add Room</button>
-                                                    </c:if>
+                                                    <h6>
+                                                        <i class="bi bi-building me-2"></i>
+                                                        Room Management
+                                                    </h6>
+
+                                                    <a class="btn-theme text-decoration-none"
+                                                       href="MainController?action=roomAdd&returnTo=dashboard">
+                                                        <i class="bi bi-plus-lg me-1"></i>
+                                                        Add Room
+                                                    </a>
                                                 </div>
+
                                                 <div class="section-card-body">
-                                                    <div class="placeholder-box">Room list will appear here</div>
+                                                    <div class="table-responsive">
+
+                                                        <table class="table table-dark table-striped table-hover align-middle mb-0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>ID</th>
+                                                                    <th>Room Name</th>
+                                                                    <th>Building</th>
+                                                                    <th>Floor</th>
+                                                                    <th>Capacity</th>
+                                                                    <th>Actions</th>
+                                                                </tr>
+                                                            </thead>
+
+                                                            <tbody>
+                                                                <% if (roomList != null && !roomList.isEmpty()) {
+                                                                    for (RoomDTO room : roomList) {
+                                                                %>
+
+                                                                <tr>
+                                                                    <td><%= room.getRoomId() %></td>
+                                                                    <td><%= room.getRoomName() %></td>
+                                                                    <td><%= room.getBuilding() == null
+                                                                            ? "Not specified"
+                                                                            : room.getBuilding() %></td>
+                                                                    <td><%= room.getFloor() %></td>
+                                                                    <td><%= room.getCapacity() %></td>
+
+                                                                    <td>
+                                                                        <div class="d-flex gap-2">
+
+                                                                            <a class="btn btn-sm btn-outline-light"
+                                                                               href="MainController?action=roomEdit&id=<%= room.getRoomId() %>&returnTo=dashboard">
+                                                                                Edit
+                                                                            </a>
+
+                                                                            <form action="MainController"
+                                                                                  method="post"
+                                                                                  onsubmit="return confirm('Are you sure you want to delete this room?');">
+
+                                                                                <input type="hidden"
+                                                                                       name="action"
+                                                                                       value="roomDelete">
+
+                                                                                <input type="hidden"
+                                                                                       name="roomId"
+                                                                                       value="<%= room.getRoomId() %>">
+
+                                                                                <input type="hidden"
+                                                                                       name="returnTo"
+                                                                                       value="dashboard">
+
+                                                                                <button class="btn btn-sm btn-outline-danger"
+                                                                                        type="submit">
+                                                                                    Delete
+                                                                                </button>
+                                                                            </form>
+
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <%
+                                                                    }
+                                                                } else {
+                                                                %>
+
+                                                                <tr>
+                                                                    <td colspan="6">
+                                                                        <div class="placeholder-box my-0">
+                                                                            <i class="bi bi-building"
+                                                                               style="font-size:26px;"></i>
+                                                                            <br>
+                                                                            No rooms found.
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <%
+                                                                }
+                                                                %>
+                                                            </tbody>
+                                                        </table>
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
