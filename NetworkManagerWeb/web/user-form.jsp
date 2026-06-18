@@ -400,7 +400,7 @@
                                         <div class="input-wrap">
                                             <i class="bi bi-person-fill"></i>
                                             <input id="username" type="text" name="username" value="<%= usernameVal %>"
-                                                placeholder="Choose username" required />
+                                                placeholder="Create username" pattern="^[a-zA-Z0-9_]+$" title="Username can only contain letters, numbers, and underscores (no spaces or accents)" required />
                                         </div>
                                     </div>
 
