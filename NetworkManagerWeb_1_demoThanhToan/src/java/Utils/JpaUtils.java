@@ -1,4 +1,7 @@
-package utils;
+package Utils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -12,7 +15,13 @@ public class JpaUtils {
 
     static {
         try {
-            factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+            Map<String, String> properties = new HashMap<>();
+            properties.put("javax.persistence.jdbc.url", DbUtils.getJdbcUrl());
+            properties.put("javax.persistence.jdbc.user", DbUtils.getDbUser());
+            properties.put("javax.persistence.jdbc.password", DbUtils.getDbPassword());
+            properties.put("javax.persistence.jdbc.driver", "org.postgresql.Driver");
+            properties.put("javax.persistence.schema-generation.database.action", "none");
+            factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, properties);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ExceptionInInitializerError("Cannot create EntityManagerFactory");

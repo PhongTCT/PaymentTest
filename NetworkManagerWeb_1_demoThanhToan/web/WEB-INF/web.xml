@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <!-- Environment variables VNPAY_TMN_CODE, VNPAY_HASH_SECRET, VNPAY_PAY_URL,
+         VNPAY_RETURN_URL and VNPAY_PREMIUM_AMOUNT override these values. -->
+    <context-param>
+        <param-name>vnpay.tmnCode</param-name>
+        <param-value>2QXUI4J4</param-value>
+    </context-param>
+    <context-param>
+        <param-name>vnpay.hashSecret</param-name>
+        <param-value>SECRETKEY123456789</param-value>
+    </context-param>
+    <context-param>
+        <param-name>vnpay.payUrl</param-name>
+        <param-value>https://sandbox.vnpayment.vn/paymentv2/vpcpay.html</param-value>
+    </context-param>
+    <context-param>
+        <param-name>vnpay.premiumAmount</param-name>
+        <param-value>99000</param-value>
+    </context-param>
     <servlet>
         <servlet-name>LoginController</servlet-name>
         <servlet-class>Controller.LoginController</servlet-class>
@@ -45,14 +63,24 @@
         <servlet-class>Controller.MaintenanceServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>VLANServlet</servlet-name>
-        <servlet-class>Controller.VLANServlet</servlet-class>
         <servlet-name>WifiController</servlet-name>
         <servlet-class>Controller.WifiController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>NetworkAlertController</servlet-name>
         <servlet-class>Controller.NetworkAlertController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>VnPayCreateServlet</servlet-name>
+        <servlet-class>Controller.VnPayCreateServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>VnPayReturnServlet</servlet-name>
+        <servlet-class>Controller.VnPayReturnServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>VnPayIpnServlet</servlet-name>
+        <servlet-class>Controller.VnPayIpnServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
@@ -99,8 +127,6 @@
         <url-pattern>/MaintenanceServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>VLANServlet</servlet-name>
-        <url-pattern>/VLANServlet</url-pattern>
         <servlet-name>WifiController</servlet-name>
         <url-pattern>/WifiController</url-pattern>
     </servlet-mapping>
@@ -108,12 +134,24 @@
         <servlet-name>NetworkAlertController</servlet-name>
         <url-pattern>/NetworkAlertController</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>VnPayCreateServlet</servlet-name>
+        <url-pattern>/vnpay/create</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>VnPayReturnServlet</servlet-name>
+        <url-pattern>/vnpay-return</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>VnPayIpnServlet</servlet-name>
+        <url-pattern>/vnpay-ipn</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>home</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 </web-app>

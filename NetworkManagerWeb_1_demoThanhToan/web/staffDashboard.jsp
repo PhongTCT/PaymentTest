@@ -2,18 +2,22 @@
     <%@page contentType="text/html" pageEncoding="UTF-8" %>
     <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
     <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-        <%@page import="Models.RouterDAO" %>
+        <%@page import="Models_DAO.RouterDAO" %>
         <%@page import="Models.RouterDTO" %>
-        <%@page import="Models.BandwidthUsageDAO" %>
+        <%@page import="Models_DAO.BandwidthUsageDAO" %>
         <%@page import="Models.BandwidthUsageDTO" %>
-        <%@page import="Models.NetworkDeviceDAO" %>
+        <%@page import="Models_DAO.NetworkDeviceDAO" %>
         <%@page import="Models.NetworkDeviceDTO" %>
-        <%@page import="Models.MaintenanceScheduleDAO" %>
+        <%@page import="Models_DAO.MaintenanceScheduleDAO" %>
         <%@page import="Models.MaintenanceScheduleDTO" %>
-        <%@page import="Models.RoomDAO" %>
+        <%@page import="Models_DAO.RoomDAO" %>
         <%@page import="Models.RoomDTO" %>
+        <%@page import="Models.UserDTO" %>
+        <%@page import="Models.PremiumSubscriptionDTO" %>
+        <%@page import="Models_DAO.PremiumSubscriptionDAO" %>
         <%@page import="java.util.ArrayList" %>
         <%@page import="java.util.HashMap" %>
+        <%@page import="java.util.UUID" %>
         <c:set var="currentUser" value="${sessionScope.user}" />
         <c:set var="role" value="${sessionScope.role}" />
         <c:set var="roleLower" value="${fn:toLowerCase(role)}" />
@@ -22,6 +26,17 @@
         </c:if>
         <c:set var="displayName" value="${empty currentUser.fullName ? currentUser.userName : currentUser.fullName}" />
         <c:set var="isAdmin" value="${roleLower eq 'admin'}" />
+        <%
+            UserDTO staffUser = (UserDTO) session.getAttribute("user");
+            PremiumSubscriptionDTO staffPremium = staffUser == null ? null
+                    : new PremiumSubscriptionDAO().findByUserId(staffUser.getUserId());
+            boolean staffPremiumActive = staffPremium != null && staffPremium.isActive();
+            String premiumCsrfToken = (String) session.getAttribute("vnpayCsrfToken");
+            if (premiumCsrfToken == null) {
+                premiumCsrfToken = UUID.randomUUID().toString();
+                session.setAttribute("vnpayCsrfToken", premiumCsrfToken);
+            }
+        %>
         <%
             RouterDAO routerDAO = new RouterDAO();
             ArrayList<RouterDTO> routerList = routerDAO.ListAll();
@@ -258,6 +273,25 @@
                             border: 1px solid rgba(139, 92, 246, 0.4);
                         }
 
+                        .premium-topbar-form { margin: 0; }
+                        .premium-topbar-button {
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 6px;
+                            border: 1px solid rgba(245, 158, 11, .55);
+                            border-radius: 999px;
+                            padding: 5px 11px;
+                            color: #fde68a;
+                            background: linear-gradient(135deg, rgba(245, 158, 11, .18), rgba(139, 92, 246, .18));
+                            font-size: 11px;
+                            font-weight: 750;
+                            letter-spacing: .04em;
+                            line-height: 1;
+                            transition: transform .18s ease, filter .18s ease;
+                        }
+                        .premium-topbar-button:hover { transform: translateY(-1px); filter: brightness(1.15); }
+                        .premium-topbar-button.active { color: #86efac; border-color: rgba(34, 197, 94, .5); }
+
                         .page-body {
                             padding: 22px;
                         }
@@ -446,6 +480,13 @@
                                 <span class="topbar-breadcrumb" id="pageBreadcrumb">/ Overview</span>
                             </div>
                             <div class="d-flex align-items-center gap-2">
+                                <form class="premium-topbar-form" method="post" action="<%= request.getContextPath() %>/vnpay/create">
+                                    <input type="hidden" name="csrfToken" value="<%= premiumCsrfToken %>">
+                                    <button type="submit" class="premium-topbar-button <%= staffPremiumActive ? "active" : "" %>"
+                                            title="<%= staffPremiumActive ? "Gia hạn Premium" : "Nâng cấp Premium qua VNPay" %>">
+                                        <i class="bi bi-stars"></i> Premium
+                                    </button>
+                                </form>
                                 <span class="${isAdmin ? 'role-badge-admin' : 'role-badge-tech'}">${role}
                                 </span>
                                 <span style="font-size:13px;color:#9db0db;">Welcome, <strong style="color:#f2f5ff;">
