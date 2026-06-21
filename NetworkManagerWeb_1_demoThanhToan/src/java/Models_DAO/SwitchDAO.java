@@ -37,7 +37,7 @@ public class SwitchDAO implements IDAO<SwitchDTO, Integer>{
             return false;
         }
 
-        String sql = "INSERT INTO [Switch] "
+        String sql = "INSERT INTO \"Switch\" "
                 + "(switch_name, total_ports, used_ports, ip_address, status, room_id) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
         try {
@@ -58,7 +58,7 @@ public class SwitchDAO implements IDAO<SwitchDTO, Integer>{
 
     @Override
     public boolean update(SwitchDTO t) {
-        String sql = "UPDATE [Switch] SET "
+        String sql = "UPDATE \"Switch\" SET "
                 + "switch_name = ?, total_ports = ?, used_ports = ?, "
                 + "ip_address = ?, status = ?, room_id = ? "
                 + "WHERE switch_id = ?";
@@ -91,7 +91,7 @@ public class SwitchDAO implements IDAO<SwitchDTO, Integer>{
 
     public ArrayList<SwitchDTO> findAll() {
         ArrayList<SwitchDTO> list = new  ArrayList<>();
-        String sql="SELECT * FROM [Switch]";
+        String sql="SELECT * FROM \"Switch\"";
         try {
             Connection connect = DbUtils.getConnection();
             Statement st = connect.createStatement();
@@ -110,7 +110,7 @@ public class SwitchDAO implements IDAO<SwitchDTO, Integer>{
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     public boolean softDelete(int switchId) {
-        String sql = "UPDATE [Switch] SET status = 'INACTIVE' WHERE switch_id = ?";
+        String sql = "UPDATE \"Switch\" SET status = 'INACTIVE' WHERE switch_id = ?";
         try ( 
                 Connection conn = DbUtils.getConnection();  
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -129,7 +129,7 @@ public class SwitchDAO implements IDAO<SwitchDTO, Integer>{
             return false;
         }
 
-        String sql = "UPDATE [Switch] SET used_ports = ? "
+        String sql = "UPDATE \"Switch\" SET used_ports = ? "
                 + "WHERE switch_id = ? AND ? <= total_ports";
         try {
             Connection connect = DbUtils.getConnection();
