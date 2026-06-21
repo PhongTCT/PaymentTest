@@ -1,8 +1,8 @@
 package Controller;
 
-import Models.AccessPointDAO;
+import Models_DAO.AccessPointDAO;
 import Models.AccessPointDTO;
-import Models.WiFiAnalyticsDAO;
+import Models_DAO.WiFiAnalyticsDAO;
 import Models.WiFiAnalyticsDTO;
 import java.io.IOException;
 import java.util.ArrayList;

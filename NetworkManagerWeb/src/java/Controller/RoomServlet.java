@@ -1,7 +1,7 @@
 
 package Controller;
 
-import Models.RoomDAO;
+import Models_DAO.RoomDAO;
 import Models.RoomDTO;
 import java.io.IOException;
 import java.util.ArrayList;

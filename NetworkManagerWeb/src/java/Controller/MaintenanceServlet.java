@@ -1,6 +1,6 @@
 package Controller;
 
-import Models.MaintenanceScheduleDAO;
+import Models_DAO.MaintenanceScheduleDAO;
 import Models.MaintenanceScheduleDTO;
 import java.io.IOException;
 import java.sql.Timestamp;

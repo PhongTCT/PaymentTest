@@ -4,6 +4,7 @@
  */
 package Models;
 
+import Models_DAO.IDAO;
 import Utils.DbUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

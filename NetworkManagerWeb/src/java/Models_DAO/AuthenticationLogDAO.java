@@ -1,6 +1,6 @@
-package Models;
+package Models_DAO;
 
-import java.sql.Date;
+import Models.AuthenticationLogDTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -9,13 +9,13 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-public class SystemLogDAO {
+public class AuthenticationLogDAO {
 
     private static final String PERSISTENCE_UNIT_NAME = "NetworkManagerWebPU";
     private static final EntityManagerFactory FACTORY
             = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
 
-    public SystemLogDAO() {
+    public AuthenticationLogDAO() {
     }
 
     private EntityManager getEntityManager() {
@@ -42,20 +42,20 @@ public class SystemLogDAO {
         }
     }
 
-    public boolean insert(SystemLogDTO log) {
+    public boolean insert(AuthenticationLogDTO log) {
         if (log == null) {
             return false;
         }
         return executeInTransaction(em -> em.persist(log));
     }
 
-    public ArrayList<SystemLogDTO> findAll() {
+    public ArrayList<AuthenticationLogDTO> findAll() {
         EntityManager em = getEntityManager();
         try {
             return new ArrayList<>(
                     em.createQuery(
-                            "SELECT s FROM SystemLogDTO s ORDER BY s.createdAt DESC",
-                            SystemLogDTO.class)
+                            "SELECT a FROM AuthenticationLogDTO a ORDER BY a.loginTime DESC",
+                            AuthenticationLogDTO.class)
                             .getResultList()
             );
         } finally {
@@ -63,12 +63,12 @@ public class SystemLogDAO {
         }
     }
 
-    public ArrayList<SystemLogDTO> findByUser(int userId) {
+    public ArrayList<AuthenticationLogDTO> findByUser(int userId) {
         EntityManager em = getEntityManager();
         try {
-            List<SystemLogDTO> logs = em.createQuery(
-                    "SELECT s FROM SystemLogDTO s WHERE s.performedBy = :userId ORDER BY s.createdAt DESC",
-                    SystemLogDTO.class)
+            List<AuthenticationLogDTO> logs = em.createQuery(
+                    "SELECT a FROM AuthenticationLogDTO a WHERE a.userId = :userId ORDER BY a.loginTime DESC",
+                    AuthenticationLogDTO.class)
                     .setParameter("userId", userId)
                     .getResultList();
             return new ArrayList<>(logs);
@@ -77,23 +77,15 @@ public class SystemLogDAO {
         }
     }
 
-    public ArrayList<SystemLogDTO> findByDate(Date date) {
-        if (date == null) {
-            return new ArrayList<>();
-        }
+    public ArrayList<AuthenticationLogDTO> findFailedAttempts() {
         EntityManager em = getEntityManager();
         try {
-            java.sql.Timestamp start = new java.sql.Timestamp(date.getTime());
-            java.sql.Timestamp end = new java.sql.Timestamp(date.getTime() + 86_400_000L);
-            List<SystemLogDTO> logs = em.createQuery(
-                    "SELECT s FROM SystemLogDTO s "
-                    + "WHERE s.createdAt >= :start AND s.createdAt < :end "
-                    + "ORDER BY s.createdAt DESC",
-                    SystemLogDTO.class)
-                    .setParameter("start", start)
-                    .setParameter("end", end)
-                    .getResultList();
-            return new ArrayList<>(logs);
+            return new ArrayList<>(
+                    em.createQuery(
+                            "SELECT a FROM AuthenticationLogDTO a WHERE a.loginStatus = 'FAILED' ORDER BY a.loginTime DESC",
+                            AuthenticationLogDTO.class)
+                            .getResultList()
+            );
         } finally {
             em.close();
         }

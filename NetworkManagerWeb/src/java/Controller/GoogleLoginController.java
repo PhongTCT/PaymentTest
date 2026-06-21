@@ -1,10 +1,10 @@
 package Controller;
 
-import Models.AuthenticationLogDAO;
+import Models_DAO.AuthenticationLogDAO;
 import Models.AuthenticationLogDTO;
 import Models.UserDAO;
 import Models.UserDTO;
-import Models.UserRoleDAO;
+import Models_DAO.UserRoleDAO;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;

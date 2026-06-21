@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Models;
+package Models_DAO;
 
 import Utils.DbUtils;
 import java.sql.Connection;
@@ -14,14 +14,27 @@ import java.util.ArrayList;
  *
  * @author nvtv0
  */
-public class MaintenanceRouterDAO {
+public class MaintenanceSwitchDAO {
 
-    public boolean addRouter(int maintenanceId, int routerId) {
-        String sql = "INSERT INTO MaintenanceRouter (maintenance_id, router_id) VALUES (?, ?)";
+    public boolean addSwitch(int maintenanceId, int switchId) {
+        String sql = "INSERT INTO MaintenanceSwitch (maintenance_id, switch_id) VALUES (?, ?)";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, maintenanceId);
-            ps.setInt(2, routerId);
+            ps.setInt(2, switchId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean removeSwitch(int maintenanceId, int switchId) {
+        String sql = "DELETE FROM MaintenanceSwitch WHERE maintenance_id = ? AND switch_id = ?";
+        try (Connection conn = DbUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, maintenanceId);
+            ps.setInt(2, switchId);
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -30,29 +43,15 @@ public class MaintenanceRouterDAO {
     }
 
 
-    public boolean removeRouter(int maintenanceId, int routerId) {
-        String sql = "DELETE FROM MaintenanceRouter WHERE maintenance_id = ? AND router_id = ?";
-        try (Connection conn = DbUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, maintenanceId);
-            ps.setInt(2, routerId);
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-
-    public ArrayList<Integer> findRoutersByMaintenance(int maintenanceId) {
+    public ArrayList<Integer> findSwitchesByMaintenance(int maintenanceId) {
         ArrayList<Integer> list = new ArrayList<>();
-        String sql = "SELECT router_id FROM MaintenanceRouter WHERE maintenance_id = ?";
+        String sql = "SELECT switch_id FROM MaintenanceSwitch WHERE maintenance_id = ?";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, maintenanceId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                list.add(rs.getInt("router_id"));
+                list.add(rs.getInt("switch_id"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,12 +60,12 @@ public class MaintenanceRouterDAO {
     }
 
 
-    public ArrayList<Integer> findMaintenancesByRouter(int routerId) {
+    public ArrayList<Integer> findMaintenancesBySwitch(int switchId) {
         ArrayList<Integer> list = new ArrayList<>();
-        String sql = "SELECT maintenance_id FROM MaintenanceRouter WHERE router_id = ?";
+        String sql = "SELECT maintenance_id FROM MaintenanceSwitch WHERE switch_id = ?";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, routerId);
+            ps.setInt(1, switchId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 list.add(rs.getInt("maintenance_id"));

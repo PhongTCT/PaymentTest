@@ -1,5 +1,6 @@
 package Models;
 
+import Models_DAO.IDAO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;

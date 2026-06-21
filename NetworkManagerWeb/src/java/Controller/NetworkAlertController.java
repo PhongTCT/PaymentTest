@@ -1,10 +1,10 @@
 package Controller;
 
-import Models.AccessPointDAO;
+import Models_DAO.AccessPointDAO;
 import Models.AccessPointDTO;
-import Models.NetworkAlertDAO;
+import Models_DAO.NetworkAlertDAO;
 import Models.NetworkAlertDTO;
-import Models.RouterDAO;
+import Models_DAO.RouterDAO;
 import Models.RouterDTO;
 import Models.SwitchDAO;
 import Models.SwitchDTO;

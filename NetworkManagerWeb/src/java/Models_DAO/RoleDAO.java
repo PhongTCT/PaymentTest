@@ -1,5 +1,6 @@
-package Models;
+package Models_DAO;
 
+import Models.RoleDTO;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import javax.persistence.EntityManager;
