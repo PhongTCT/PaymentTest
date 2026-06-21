@@ -1,0 +1,14 @@
+.git
+.gitignore
+.idea
+.vscode
+.netbeans
+build
+dist
+target
+nbproject/private
+*.log
+Dockerfile*
+README*
+VNPAY_SETUP.md
+DOCKER.md
