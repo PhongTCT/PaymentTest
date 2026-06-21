@@ -1,27 +1,22 @@
 package Models_DAO;
 
 import Models.RouterDTO;
+import Utils.JpaUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
 public class RouterDAO implements IDAO<RouterDTO, Integer> {
 
     private static final String INACTIVE_STATUS = "INACTIVE";
-    private static final String PERSISTENCE_UNIT_NAME = "NetworkManagerWebPU";
-    private static final EntityManagerFactory FACTORY
-            = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-
     public RouterDAO() {
     }
 
     private EntityManager getEntityManager() {
-        return FACTORY.createEntityManager();
+        return JpaUtils.getEntityManager();
     }
 
     private boolean executeInTransaction(Consumer<EntityManager> action) {

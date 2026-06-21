@@ -7,9 +7,27 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="NetworkManagerWeb" default="default" basedir=".">
-    <description>Builds, tests, and runs the project NetworkManagerWeb.</description>
+<project name="NetworkManagerWeb_1_demoThanhToan" default="default" basedir=".">
+    <description>Builds, tests, and runs the project NetworkManagerWeb_1_demoThanhToan.</description>
     <import file="nbproject/build-impl.xml"/>
+
+    <!-- Có thể ghi đè bằng: ant migrate-vnpay -Ddb.user=... -Ddb.password=... -->
+    <target name="migrate-vnpay" description="Create VNPay payment and Premium tables in the existing database">
+        <property name="db.url" value="jdbc:sqlserver://localhost:1433;databaseName=network_simulation_db3"/>
+        <property name="db.user" value="sa"/>
+        <property name="db.password" value="12345"/>
+        <sql driver="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+             url="${db.url}"
+             userid="${db.user}"
+             password="${db.password}"
+             src="${basedir}/web/lib/vnpay_migration.sql"
+             classpath="${basedir}/web/lib/sqljdbc4.jar"
+             delimiter="GO"
+             delimitertype="row"
+             autocommit="false"
+             onerror="abort"
+             print="true"/>
+    </target>
     <!--
 
     There exist several targets which are by default empty and which can be 

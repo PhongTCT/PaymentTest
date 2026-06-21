@@ -1,10 +1,27 @@
 <%-- userDashboard.jsp - Dashboard for USER role Accessible after login when roleID='USER' --%>
     <%@page contentType="text/html" pageEncoding="UTF-8" %>
         <%@page import="Models.UserDTO" %>
+        <%@page import="Models.PremiumSubscriptionDTO" %>
+        <%@page import="Models_DAO.PremiumSubscriptionDAO" %>
+        <%@page import="java.text.NumberFormat" %>
+        <%@page import="java.text.SimpleDateFormat" %>
+        <%@page import="java.util.Locale" %>
+        <%@page import="java.util.UUID" %>
             <% UserDTO currentUser=(UserDTO) session.getAttribute("user"); String role=(String)
                 session.getAttribute("role"); if (currentUser==null || role==null || !role.equalsIgnoreCase("Viewer")) {
                 response.sendRedirect("login.jsp"); return; } String displayName=currentUser.getFullName() !=null ?
-                currentUser.getFullName() : currentUser.getUserName(); %>
+                currentUser.getFullName() : currentUser.getUserName();
+                PremiumSubscriptionDTO premiumSubscription = new PremiumSubscriptionDAO().findByUserId(currentUser.getUserId());
+                boolean premiumActive = premiumSubscription != null && premiumSubscription.isActive();
+                String csrfToken = (String) session.getAttribute("vnpayCsrfToken");
+                if (csrfToken == null) { csrfToken = UUID.randomUUID().toString(); session.setAttribute("vnpayCsrfToken", csrfToken); }
+                long premiumPrice = 99000L;
+                String configuredPrice = System.getenv("VNPAY_PREMIUM_AMOUNT");
+                if (configuredPrice == null || configuredPrice.trim().isEmpty()) configuredPrice = application.getInitParameter("vnpay.premiumAmount");
+                try { if (configuredPrice != null) premiumPrice = Long.parseLong(configuredPrice.trim()); } catch (NumberFormatException ignored) { }
+                String premiumPriceText = NumberFormat.getInstance(new Locale("vi", "VN")).format(premiumPrice);
+                String premiumExpiryText = premiumSubscription != null && premiumSubscription.getExpiresAt() != null
+                        ? new SimpleDateFormat("dd/MM/yyyy HH:mm").format(premiumSubscription.getExpiresAt()) : ""; %>
                 <!DOCTYPE html>
                 <html lang="en">
 
@@ -287,6 +304,25 @@
                             filter: brightness(1.1);
                         }
 
+                        .premium-topbar-form { margin: 0; }
+                        .premium-topbar-button {
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 6px;
+                            border: 1px solid rgba(245, 158, 11, .55);
+                            border-radius: 999px;
+                            padding: 5px 11px;
+                            color: #fde68a;
+                            background: linear-gradient(135deg, rgba(245, 158, 11, .18), rgba(139, 92, 246, .18));
+                            font-size: 11px;
+                            font-weight: 750;
+                            letter-spacing: .04em;
+                            line-height: 1;
+                            transition: transform .18s ease, filter .18s ease;
+                        }
+                        .premium-topbar-button:hover { transform: translateY(-1px); filter: brightness(1.15); }
+                        .premium-topbar-button.active { color: #86efac; border-color: rgba(34, 197, 94, .5); }
+
                         @media (max-width: 900px) {
                             .sidebar {
                                 display: none;
@@ -364,6 +400,13 @@
                                 <span class="topbar-breadcrumb" id="pageBreadcrumb">/ Overview</span>
                             </div>
                             <div class="d-flex align-items-center gap-2">
+                                <form class="premium-topbar-form" method="post" action="<%= request.getContextPath() %>/vnpay/create">
+                                    <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
+                                    <button type="submit" class="premium-topbar-button <%= premiumActive ? "active" : "" %>"
+                                            title="<%= premiumActive ? "Gia hạn Premium - hiệu lực đến " + premiumExpiryText : "Nâng cấp Premium " + premiumPriceText + "đ/tháng" %>">
+                                        <i class="bi bi-stars"></i> Premium
+                                    </button>
+                                </form>
                                 <span class="role-badge-viewer">
                                     <%= role %>
                                 </span>
@@ -417,6 +460,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
 
                             <div class="page-section" id="page-profile">
