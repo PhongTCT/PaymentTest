@@ -6,10 +6,6 @@
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
-      <property name="javax.persistence.jdbc.url"      value="${DB_URL}"/>
-      <property name="javax.persistence.jdbc.user"     value="${DB_USER}"/>
-      <property name="javax.persistence.jdbc.password" value="${DB_PASSWORD}"/>
-      <property name="javax.persistence.jdbc.driver"   value="org.postgresql.Driver"/>
       <property name="javax.persistence.schema-generation.database.action" value="none"/>
     </properties>
   </persistence-unit>
