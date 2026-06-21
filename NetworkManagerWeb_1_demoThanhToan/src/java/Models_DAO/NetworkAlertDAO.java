@@ -37,7 +37,7 @@ public class NetworkAlertDAO implements IDAO<NetworkAlertDTO, Integer>{
     @Override
     public boolean insert(NetworkAlertDTO t) {
         String sql = "INSERT INTO NetworkAlert (alert_type, message, severity, created_at, router_id, ap_id, switch_id) "
-                   + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?)";
+                   + "VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?)";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, t.getAlertType());

@@ -66,7 +66,7 @@ public class VnPayPaymentDAO {
             }
 
             String updatePayment = "UPDATE PaymentTransaction SET status = 'SUCCESS', bank_code = ?, "
-                    + "transaction_no = ?, response_code = ?, vnp_pay_date = ?, paid_at = GETDATE() "
+                    + "transaction_no = ?, response_code = ?, vnp_pay_date = ?, paid_at = CURRENT_TIMESTAMP "
                     + "WHERE payment_id = ?";
             try (PreparedStatement statement = connection.prepareStatement(updatePayment)) {
                 statement.setString(1, bankCode);
@@ -78,8 +78,8 @@ public class VnPayPaymentDAO {
             }
 
             String updateSubscription = "UPDATE PremiumSubscription SET plan_code = 'PREMIUM_MONTHLY', "
-                    + "status = 'ACTIVE', expires_at = CASE WHEN expires_at > GETDATE() "
-                    + "THEN DATEADD(MONTH, 1, expires_at) ELSE DATEADD(MONTH, 1, GETDATE()) END, "
+                    + "status = 'ACTIVE', expires_at = CASE WHEN expires_at > CURRENT_TIMESTAMP "
+                    + "THEN expires_at + INTERVAL '1 month' ELSE CURRENT_TIMESTAMP + INTERVAL '1 month' END, "
                     + "last_payment_id = ? WHERE user_id = ?";
             int updated;
             try (PreparedStatement statement = connection.prepareStatement(updateSubscription)) {
@@ -90,7 +90,7 @@ public class VnPayPaymentDAO {
             if (updated == 0) {
                 String insertSubscription = "INSERT INTO PremiumSubscription "
                         + "(user_id, plan_code, status, started_at, expires_at, last_payment_id) "
-                        + "VALUES (?, 'PREMIUM_MONTHLY', 'ACTIVE', GETDATE(), DATEADD(MONTH, 1, GETDATE()), ?)";
+                        + "VALUES (?, 'PREMIUM_MONTHLY', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '1 month', ?)";
                 try (PreparedStatement statement = connection.prepareStatement(insertSubscription)) {
                     statement.setInt(1, payment.getUserId());
                     statement.setLong(2, payment.getPaymentId());

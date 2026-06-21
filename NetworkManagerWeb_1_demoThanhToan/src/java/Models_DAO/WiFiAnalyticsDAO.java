@@ -130,7 +130,7 @@ public class WiFiAnalyticsDAO implements IDAO<WiFiAnalyticsDTO, Integer> {
     }
 
     public boolean generateDailyAnalytics(int apId, int totalUsers, int peakUsers, double avgSpeed) {
-        String checkSql = "SELECT analytics_id FROM WiFiAnalytics WHERE ap_id = ? AND analytics_date = CAST(GETDATE() AS DATE)";
+        String checkSql = "SELECT analytics_id FROM WiFiAnalytics WHERE ap_id = ? AND analytics_date = CURRENT_DATE";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
             checkPs.setInt(1, apId);
@@ -148,7 +148,7 @@ public class WiFiAnalyticsDAO implements IDAO<WiFiAnalyticsDTO, Integer> {
                 }
             } else {
                 String insertSql = "INSERT INTO WiFiAnalytics (total_users, peak_users, avg_speed, analytics_date, ap_id) "
-                                 + "VALUES (?, ?, ?, CAST(GETDATE() AS DATE), ?)";
+                                 + "VALUES (?, ?, ?, CURRENT_DATE, ?)";
                 try (PreparedStatement insertPs = conn.prepareStatement(insertSql)) {
                     insertPs.setInt(1, totalUsers);
                     insertPs.setInt(2, peakUsers);

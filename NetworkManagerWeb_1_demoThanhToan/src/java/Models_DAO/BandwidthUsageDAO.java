@@ -29,7 +29,7 @@ public class BandwidthUsageDAO implements IDAO<BandwidthUsageDTO, Integer> {
     @Override
     public boolean insert(BandwidthUsageDTO t) {
         String sql = "INSERT INTO BandwidthUsage (upload_speed, download_speed, record_time, device_id) "
-                   + "VALUES (?, ?, GETDATE(), ?)";
+                   + "VALUES (?, ?, CURRENT_TIMESTAMP, ?)";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setDouble(1, t.getUploadSpeed());

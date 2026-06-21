@@ -118,7 +118,7 @@ public class MaintenanceScheduleDAO implements IDAO<MaintenanceScheduleDTO, Inte
     public ArrayList<MaintenanceScheduleDTO> findUpcoming() {
         ArrayList<MaintenanceScheduleDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM MaintenanceSchedule "
-                   + "WHERE start_time >= GETDATE() AND status IN ('PLANNED','IN_PROGRESS') "
+                   + "WHERE start_time >= CURRENT_TIMESTAMP AND status IN ('PLANNED','IN_PROGRESS') "
                    + "ORDER BY start_time ASC";
         try (Connection conn = DbUtils.getConnection();
              Statement st = conn.createStatement();
